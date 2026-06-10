@@ -128,14 +128,12 @@
 </head>
 <body>
 
-<!-- ==================== لاگ ان سکرین ==================== -->
 <div id="loginScreen" class="login-screen">
     <div class="login-box">
         <div style="font-size: 60px; margin-bottom: 10px;">📦</div>
         <h1>انوینٹری سسٹم</h1>
         <p>اپنا کردار منتخب کریں</p>
         
-        <!-- صرف 3 رولز دکھائیں گے - سپر ایڈمن ہڈن -->
         <div class="role-selector" id="loginRoleSelector">
             <button class="role-btn selected" onclick="selectRole('account_owner')" id="roleAccount">
                 <span style="font-size: 24px;">🏪</span>
@@ -151,7 +149,6 @@
             </button>
         </div>
 
-        <!-- لاگ ان فارم -->
         <div id="loginForm">
             <input type="text" class="login-input" id="loginUsername" placeholder="📧 صارف نام">
             <input type="password" class="login-input" id="loginPassword" placeholder="🔒 پاس ورڈ">
@@ -160,7 +157,6 @@
             </button>
         </div>
 
-        <!-- اونر رجسٹر کا لنک -->
         <div id="ownerRegisterLink" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
             <span style="color: #999; font-size: 13px;">اکاؤنٹ نہیں ہے؟</span><br>
             <span class="toggle-link" onclick="showOwnerRegister()">
@@ -170,10 +166,8 @@
     </div>
 </div>
 
-<!-- سپر ایڈمن ٹرگر (پوشیدہ - 5 بار تیز دبانے سے) -->
 <div class="admin-trigger" id="adminTrigger" onclick="handleAdminTrigger()"></div>
 
-<!-- سپر ایڈمن لاگ ان مودال -->
 <div class="modal-overlay" id="adminLoginModal" style="z-index: 5000;">
     <div class="modal-box">
         <div class="modal-header">
@@ -197,10 +191,8 @@
     </div>
 </div>
 
-<!-- ==================== مین ایپ ==================== -->
 <div id="mainApp" class="container hidden">
 
-    <!-- ہیڈر -->
     <div class="app-header">
         <div class="user-info">
             <div class="user-avatar" id="userAvatar">U</div>
@@ -215,7 +207,6 @@
         </div>
     </div>
 
-    <!-- ٹیبز -->
     <div class="tabs" id="mainTabs">
         <button class="tab active" onclick="showTab('dashboard')">📊 ڈیش بورڈ</button>
         <button class="tab" onclick="showTab('scan')">📷 اسکین</button>
@@ -225,7 +216,6 @@
         <button class="tab owner-tab hidden" onclick="showTab('settings')">⚙️ سیٹنگز</button>
     </div>
 
-    <!-- ڈیش بورڈ -->
     <div id="tab-dashboard" class="tab-content active">
         <div class="stats-grid">
             <div class="stat-box">
@@ -258,7 +248,6 @@
         </div>
     </div>
 
-    <!-- اسکین ٹیب -->
     <div id="tab-scan" class="tab-content">
         <div class="card">
             <div class="scanner-container">
@@ -302,7 +291,6 @@
                 </div>
             </div>
 
-            <!-- اونر کے لیے دونوں قیمتیں -->
             <div id="ownerPrices" style="margin-top: 20px;">
                 <h4 style="margin-bottom: 15px; color: #e94560;">💰 قیمتیں (صرف اونر کے لیے)</h4>
                 <div class="price-inputs">
@@ -317,7 +305,6 @@
                 </div>
             </div>
 
-            <!-- سٹاف کے لیے صرف فروخت قیمت -->
             <div id="staffPrices" class="hidden" style="margin-top: 20px;">
                 <div class="input-group">
                     <label>🏷️ فروخت قیمت</label>
@@ -331,7 +318,6 @@
         </div>
     </div>
 
-    <!-- پراڈکٹس ٹیب -->
     <div id="tab-products" class="tab-content">
         <div class="card">
             <h3 class="section-title">📦 پراڈکٹس کی فہرست</h3>
@@ -348,7 +334,6 @@
         </div>
     </div>
 
-    <!-- سیلز ٹیب -->
     <div id="tab-sales" class="tab-content">
         <div class="card">
             <h3 class="section-title">💰 نئی سیل</h3>
@@ -387,7 +372,6 @@
         </div>
     </div>
 
-    <!-- اسٹاف ٹیب (صرف اونر) -->
     <div id="tab-staff" class="tab-content">
         <div class="card">
             <h3 class="section-title">➕ نیا اسٹاف شامل کریں</h3>
@@ -425,7 +409,6 @@
         </div>
     </div>
 
-    <!-- سیٹنگز ٹیب -->
     <div id="tab-settings" class="tab-content">
         <div class="card">
             <h3 class="section-title">☁️ گوگل شیٹس سیٹ اپ</h3>
@@ -457,7 +440,6 @@
     </div>
 </div>
 
-<!-- اونر رجسٹر مودال -->
 <div class="modal-overlay" id="ownerRegisterModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -466,7 +448,7 @@
         </div>
         <div class="info-text">
             🏪 <strong>اکاؤنٹ اونر رجسٹریشن</strong><br>
-            یہ اکاؤنٹ آپ کا مالکانہ اکاؤنٹ ہوگا۔ اس سے آپ منیجر اور سیلزمین بنا سکیں گے۔
+            یہ اکاؤنٹ آپ کا مالکانہ اکاؤنٹ ہوگی۔ اس سے آپ منیجر اور سیلزمین بنا سکیں گے۔
         </div>
         <div class="input-group">
             <label>پورا نام *</label>
@@ -490,7 +472,6 @@
     </div>
 </div>
 
-<!-- ایڈٹ مودال -->
 <div class="modal-overlay" id="editModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -534,7 +515,6 @@
     </div>
 </div>
 
-<!-- نوٹیفکیشن -->
 <div class="notification" id="notification"></div>
 
 <script>
@@ -580,7 +560,7 @@ function adminLogin() {
     const password = document.getElementById('adminPassword').value;
     if (password === SUPER_ADMIN.password) {
         currentUser = {
-            id: 'superadmin_' + Date.now(),
+            id: 'superadmin',
             name: SUPER_ADMIN.name,
             username: SUPER_ADMIN.username,
             password: SUPER_ADMIN.password,
@@ -709,15 +689,44 @@ function saveAllUsers(users) {
 // ==================== ڈیٹا مینجمنٹ ====================
 function loadUserData() {
     if (!currentUser) return;
-    const prefix = currentUser.id + '_';
-    products = JSON.parse(localStorage.getItem(prefix + 'products') || '[]');
-    sales = JSON.parse(localStorage.getItem(prefix + 'sales') || '[]');
-    activities = JSON.parse(localStorage.getItem(prefix + 'activities') || '[]');
+    
+    if (currentUser.id === 'superadmin') {
+        // سپر ایڈمن تمام اونرز کا ڈیٹا اکٹھا کرے گا
+        products = []; sales = []; activities = [];
+        const allUsers = getAllUsers();
+        allUsers.forEach(u => {
+            if (u.role === 'account_owner' || u.id.startsWith('owner_')) {
+                const pfx = u.id + '_';
+                const uProds = JSON.parse(localStorage.getItem(pfx + 'products') || '[]');
+                const uSales = JSON.parse(localStorage.getItem(pfx + 'sales') || '[]');
+                const uActs = JSON.parse(localStorage.getItem(pfx + 'activities') || '[]');
+                
+                products = products.concat(uProds);
+                sales = sales.concat(uSales);
+                activities = activities.concat(uActs);
+            }
+        });
+        activities.sort((a,b) => b.id - a.id);
+    } else if (currentUser.role === 'manager' || currentUser.role === 'salesman') {
+        // اسٹاف کو اس کے متعلقہ اونر کا ڈیٹا شو ہوگا
+        const prefix = currentUser.ownerId + '_';
+        products = JSON.parse(localStorage.getItem(prefix + 'products') || '[]');
+        sales = JSON.parse(localStorage.getItem(prefix + 'sales') || '[]');
+        activities = JSON.parse(localStorage.getItem(prefix + 'activities') || '[]');
+    } else {
+        // اکاؤنٹ اونر کا اپنا ڈیٹا
+        const prefix = currentUser.id + '_';
+        products = JSON.parse(localStorage.getItem(prefix + 'products') || '[]');
+        sales = JSON.parse(localStorage.getItem(prefix + 'sales') || '[]');
+        activities = JSON.parse(localStorage.getItem(prefix + 'activities') || '[]');
+    }
 }
 
 function saveUserData() {
-    if (!currentUser) return;
-    const prefix = currentUser.id + '_';
+    if (!currentUser || currentUser.id === 'superadmin') return; 
+    // ڈیٹا ہمیشہ اکاؤنٹ اونر کے کی-اسپیس (Key-space) میں سیو ہوگا
+    const targetId = (currentUser.role === 'manager' || currentUser.role === 'salesman') ? currentUser.ownerId : currentUser.id;
+    const prefix = targetId + '_';
     localStorage.setItem(prefix + 'products', JSON.stringify(products));
     localStorage.setItem(prefix + 'sales', JSON.stringify(sales));
     localStorage.setItem(prefix + 'activities', JSON.stringify(activities));
@@ -770,6 +779,11 @@ function showMainApp() {
         document.getElementById('ownerPrices').classList.add('hidden');
         document.getElementById('staffPrices').classList.remove('hidden');
         document.querySelectorAll('.owner-edit-price').forEach(el => el.classList.add('hidden'));
+    }
+
+    // اگر سپر ایڈمن ہے تو اسٹاف اور سیٹنگز ٹیب چھپائیں کیونکہ یہ گلوبل ویو ہے
+    if (currentUser.id === 'superadmin') {
+        document.querySelectorAll('.owner-tab').forEach(el => el.classList.add('hidden'));
     }
 
     updateDashboard();
@@ -882,6 +896,7 @@ function stopScanner() {
     }
 }
 
+// ==================== پراڈکٹس ====================
 function handleScan(barcode) {
     const existing = products.find(p => p.barcode === barcode);
     
@@ -908,7 +923,6 @@ function handleScan(barcode) {
     }, 3000);
 }
 
-// ==================== پراڈکٹس ====================
 function addProduct() {
     const barcode = document.getElementById('manualBarcode').value.trim();
     const name = document.getElementById('manualName').value.trim();
@@ -1344,7 +1358,8 @@ function syncNow() {
 function clearAllData() {
     if (!confirm('⚠️ تمام ڈیٹا حذف کریں؟ یہ واپس نہیں آئے گا!')) return;
     
-    const prefix = currentUser.id + '_';
+    const targetId = (currentUser.role === 'manager' || currentUser.role === 'salesman') ? currentUser.ownerId : currentUser.id;
+    const prefix = targetId + '_';
     localStorage.removeItem(prefix + 'products');
     localStorage.removeItem(prefix + 'sales');
     localStorage.removeItem(prefix + 'activities');
