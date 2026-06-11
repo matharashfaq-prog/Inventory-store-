@@ -1405,6 +1405,20 @@ document.getElementById('editModal')?.addEventListener('click', e => {
 </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC4MeuXCdF2a3JgZDQtkYYT5NztquYJXmo",
+    authDomain: "inventory-store-athar.firebaseapp.com",
+    projectId: "inventory-store-athar",
+    storageBucket: "inventory-store-athar.firebasestorage.app",
+    messagingSenderId: "718339267329",
+    appId: "1:718339267329:web:d9ab16074f4a7367ff9900",
+    measurementId: "G-FWPFRDB57R"
+  };
 
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+    
 </body>
 </html>
