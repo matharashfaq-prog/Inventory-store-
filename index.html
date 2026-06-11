@@ -1333,48 +1333,66 @@ function exportData(format) {
 // ==================== گوگل شیٹس ====================
 function syncToGoogleSheets() {
     const status = document.getElementById('syncStatus');
-    status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
-    status.className = 'sync-status syncing';
+    if (status) {
+        status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
+        status.className = 'sync-status syncing';
+    }
     
-    // لوکل اسٹوریج سے پروڈکٹس کا ڈیٹا نکالیں
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+    let products = [];
+    try {
+        products = JSON.parse(localStorage.getItem("products")) || [];
+    } catch(e) {
+        console.error("لوکل اسٹوریج ریڈ کرنے میں مسئلہ:", e);
+    }
 
     if (products.length === 0) {
-        status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
-        status.className = 'sync-status';
+        if (status) {
+            status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
+            status.className = 'sync-status';
+        }
         showNotification('اسٹاک میں کوئی پروڈکٹ نہیں ہے جسے سنک کیا جا سکے!');
         return;
     }
 
-    // فائر بیس کلاؤڈ پر ڈیٹا بھیجنے کا عمل
-    // ہم باری باری تمام پروڈکٹس کو فائر بیس کے 'inventory' کلیکشن میں محفوظ کریں گے
+    if (typeof db === 'undefined') {
+        if (status) {
+            status.textContent = '❌ فائر بیس کنکشن غائب';
+            status.className = 'sync-status';
+        }
+        showNotification('فائر بیس ڈیٹا بیس لوڈ نہیں ہو سکا!');
+        return;
+    }
+
     let syncCount = 0;
     
     products.forEach((product) => {
         db.collection("inventory").add({
-            productName: product.name || '',
-            productPurchasePrice: product.pPrice || 0,
-            productSalePrice: product.sPrice || 0,
-            productStock: product.stock || 0,
-            productCategory: product.category || 'General',
+            productName: product.name || product.productName || 'No Name',
+            productPurchasePrice: product.pPrice || product.productPurchasePrice || 0,
+            productSalePrice: product.sPrice || product.productSalePrice || 0,
+            productStock: product.stock || product.productStock || 0,
+            productCategory: product.category || product.productCategory || 'General',
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         })
         .then(() => {
             syncCount++;
             if (syncCount === products.length) {
-                status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
-                status.className = 'sync-status';
+                if (status) {
+                    status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
+                    status.className = 'sync-status';
+                }
                 showNotification('🔄 تمام اسٹاک مستقل طور پر کلاؤڈ میں محفوظ ہو گیا ہے!');
             }
         })
         .catch((error) => {
             console.error("فائر بیس سنک میں خرابی: ", error);
-            status.textContent = '❌ سنک فیل ہو گیا';
-            status.className = 'sync-status';
+            if (status) {
+                status.textContent = '❌ سنک فیل ہو گیا';
+                status.className = 'sync-status';
+            }
         });
     });
 }
-
 }
 
 function clearAllData() {
