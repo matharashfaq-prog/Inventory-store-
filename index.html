@@ -6,460 +6,479 @@
     <title>انوینٹری مینجمنٹ سسٹم - Ather Software</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* آپ کا اصل مٹیریل اور تھیمنگ کا خوبصورت ڈیزائن */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --success-color: #2ecc71;
-            --warning-color: #f1c40f;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --sidebar-gradient: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+            --accent-color: #00d2ff;
+            --success-color: #00b09b;
+            --success-gradient: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+            --danger-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            --warning-gradient: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            --light-bg: #f4f7f6;
             --card-bg: #ffffff;
-            --text-main: #2c3e50;
-            --text-muted: #7f8c8d;
-            --border-color: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            --transition: all 0.3s ease;
-            --dark-bg: #1a202c;
-            --dark-card: #2d3748;
-            --dark-text: #e2e8f0;
+            --text-color: #2c3e50;
+            --border-radius: 15px;
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         body.dark-mode {
-            background-color: var(--dark-bg);
-            color: var(--dark-text);
-        }
-
-        body.dark-mode .card, 
-        body.dark-mode .stat-card, 
-        body.dark-mode .modal-content,
-        body.dark-mode input,
-        body.dark-mode select,
-        body.dark-mode textarea {
-            background-color: var(--dark-card);
-            color: var(--dark-text);
-            border-color: #4a5568;
-        }
-
-        body.dark-mode th {
-            background-color: #4a5568;
-            color: var(--dark-text);
-        }
-
-        body.dark-mode td {
-            border-bottom-color: #4a5568;
-            color: var(--dark-text);
+            --light-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Poppins', 'Noto Nastaliq Urdu', sans-serif;
         }
 
         body {
-            font-family: 'Poppins', 'Noto Nastaliq Urdu', sans-serif;
             background-color: var(--light-bg);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding-bottom: 60px;
+            color: var(--text-color);
+            padding-bottom: 50px;
             transition: var(--transition);
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--primary-gradient);
             color: white;
-            padding: 2rem 1rem;
+            padding: 30px 20px;
             text-align: center;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
+            box-shadow: var(--box-shadow);
             position: relative;
-            overflow: hidden;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .header p {
-            font-size: 1rem;
+            font-size: 1.1rem;
             opacity: 0.9;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
-        @media (min-width: 768px) {
-            .container {
-                grid-template-columns: 350px 1fr;
+        .theme-toggle-btn:hover {
+            background: white;
+            color: #1e3c72;
+        }
+
+        .admin-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .admin-btn:hover {
+            background: white;
+            color: #1e3c72;
+            transform: translateY(-2px);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .main-container {
+                grid-template-columns: 380px 1fr;
             }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0,0,0,0.03);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .card {
+            border-color: rgba(255,255,255,0.05);
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
 
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light-bg);
-            color: var(--accent-color);
+        .card-heading {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1e3c72;
+            border-bottom: 2px solid #f4f7f6;
+            padding-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
 
-        body.dark-mode .card-title {
-            border-bottom-color: #4a5568;
+        body.dark-mode .card-heading {
+            color: var(--accent-color);
+            border-bottom-color: #2d3748;
         }
 
-        .form-group {
-            margin-bottom: 1.25rem;
+        .input-group {
+            margin-bottom: 18px;
         }
 
-        label {
+        .input-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--secondary-color);
-        }
-
-        body.dark-mode label {
-            color: #cbd5e0;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: inherit;
+            margin-bottom: 8px;
             font-size: 0.95rem;
-            transition: var(--transition);
-            background-color: #fff;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1rem;
             font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .input-group input, body.dark-mode .input-group select {
+            border-color: #334155;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+        }
+
+        .custom-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .btn-primary { background-color: var(--accent-color); color: white; }
-        .btn-primary:hover { background-color: #2980b9; }
-        .btn-success { background-color: var(--success-color); color: white; }
-        .btn-success:hover { background-color: #27ae60; }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-danger:hover { background-color: #c0392b; }
-        .btn-warning { background-color: var(--warning-color); color: white; }
-        .btn-warning:hover { background-color: #d35400; }
+        .btn-primary-grad { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .btn-primary-grad:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(56, 239, 125, 0.3); }
+        .btn-secondary-grad { background: var(--primary-gradient); }
+        .btn-secondary-grad:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3); }
+        .btn-warning-grad { background: var(--warning-gradient); }
+        .btn-danger-grad { background: var(--danger-gradient); }
 
-        .search-box {
-            margin-bottom: 1.5rem;
-            position: relative;
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .table-responsive {
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            border-right: 5px solid #3498db;
+            transition: var(--transition);
+        }
+
+        .metric-card.cats { border-right-color: #96c93d; }
+        .metric-card.items { border-right-color: #1e3c72; }
+        .metric-card.wealth { border-right-color: #ff4b2b; }
+
+        .metric-card:hover { transform: translateY(-3px); }
+
+        .metric-title { font-size: 0.95rem; color: #7f8c8d; font-weight: 600; }
+        .metric-value { font-size: 1.8rem; font-weight: 800; color: var(--text-color); margin-top: 5px; }
+
+        .search-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            box-shadow: var(--box-shadow);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .search-wrapper input { border-color: #334155; }
+
+        .table-holder {
             overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        body.dark-mode .table-responsive {
-            border-color: #4a5568;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            background: var(--card-bg);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: right;
-            font-size: 0.95rem;
-        }
-
-        th, td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
         }
 
         th {
-            background-color: var(--light-bg);
-            color: var(--secondary-color);
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.98rem;
+        }
+
+        body.dark-mode td { border-bottom-color: #334155; }
+
+        tr:hover td { background-color: rgba(52, 152, 219, 0.04); }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .status-pill.instock { background-color: rgba(0, 176, 155, 0.15); color: #00b09b; }
+        .status-pill.lowstock { background-color: rgba(255, 65, 108, 0.15); color: #ff416c; }
+
+        .action-del-btn {
+            background: var(--danger-gradient);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .action-del-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(255, 75, 43, 0.2); }
+
+        /* پاپ اپ ماڈل ڈیزائن */
+        .popup-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5000; opacity: 0; pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .popup-modal.active { opacity: 1; pointer-events: auto; }
+
+        .popup-box {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 460px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+            transform: translateY(-30px);
+            transition: var(--transition);
+        }
+
+        .popup-modal.active .popup-box { transform: translateY(0); }
+
+        .sync-status-msg {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 8px;
             font-weight: 600;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .syncing-pulse {
+            color: #3498db;
+            animation: pulse-animation 1.5s infinite;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .badge-success { background-color: rgba(46, 204, 113, 0.15); color: #27ae60; }
-        .badge-danger { background-color: rgba(231, 76, 60, 0.15); color: #c0392b; }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            transform: translateY(150%);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .notification.show {
-            transform: translateY(0);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: var(--light-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-top: 0.25rem;
-        }
-
-        body.dark-mode .stat-value {
-            color: var(--accent-color);
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        .modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: var(--shadow);
-            position: relative;
-        }
-
-        .sync-status {
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            color: var(--text-muted);
-        }
-
-        .syncing {
-            color: var(--accent-color);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; }
+        @keyframes pulse-animation {
+            0% { opacity: 0.5; }
             50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            100% { opacity: 0.5; }
         }
 
-        .top-buttons {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
+        .app-notification {
+            position: fixed;
+            bottom: 25px; left: 25px;
+            background: #2c3e50; color: white;
+            padding: 15px 25px; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 9999; transform: translateY(200px);
             transition: var(--transition);
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 600;
         }
 
-        .nav-btn:hover {
-            background: white;
-            color: var(--primary-color);
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-        }
+        .app-notification.visible { transform: translateY(0); }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="theme-toggle">
-            <button class="nav-btn" onclick="toggleTheme()">🌓 تھیم تبدیل کریں</button>
+        <button class="theme-toggle-btn" onclick="handleThemeSwitch()">🌓 تھیم موڈ</button>
+        <div class="admin-controls">
+            <button class="admin-btn" onclick="triggerModal('superAdminModal')">👑 سپر ایڈمن</button>
+            <button class="admin-btn" onclick="triggerModal('directorModal')">🔒 ڈائریکٹر پینل</button>
         </div>
-        <div class="top-buttons">
-            <button class="nav-btn" onclick="openModal('superAdminModal')">👑 سپر ایڈمن</button>
-            <button class="nav-btn" onclick="openModal('ownerModal')">🔒 ڈائریکٹر لاگ ان</button>
-        </div>
-        <h1>انوینٹری اسٹور پینل</h1>
-        <p>Ather Software — کلاؤڈ انٹیگریٹڈ اسٹاک مینجمنٹ</p>
+        <h1>انوینٹری کنٹرول ڈیش بورڈ</h1>
+        <p>Athar Software Solutions — کلاؤڈ اور لوکل ڈیٹا اسٹوریج</p>
     </header>
 
-    <div class="container">
-        <div class="sidebar-layout">
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-title">📦 پروڈکٹ انٹری</div>
-                <form id="productForm" onsubmit="event.preventDefault(); addProduct();">
-                    <div class="form-group">
-                        <label>پروڈکٹ کا نام</label>
-                        <input type="text" id="prodName" placeholder="نام لکھیں" required>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-heading">📦 نیا اسٹاک اندراج فارم</div>
+                <form id="stockForm" onsubmit="event.preventDefault(); processFormEntry();">
+                    <div class="input-group">
+                        <label>پروڈکٹ ڈسکرپشن / نام</label>
+                        <input type="text" id="itemName" placeholder="مثال: دبکا، سالمہ، نقشی، آری دھاگہ..." required>
                     </div>
-                    <div class="form-group">
-                        <label>خریداری قیمت (روپے)</label>
-                        <input type="number" id="prodPPrice" min="0" placeholder="0" required>
+                    <div class="input-group">
+                        <label>خریداری لاگت قیمت (فی آئٹم)</label>
+                        <input type="number" id="itemBuyPrice" min="0" placeholder="0 روپے" required>
                     </div>
-                    <div class="form-group">
-                        <label>فروخت قیمت (روپے)</label>
-                        <input type="number" id="prodSPrice" min="0" placeholder="0" required>
+                    <div class="input-group">
+                        <label>فروخت ریٹیل قیمت (فی آئٹم)</label>
+                        <input type="number" id="itemSellPrice" min="0" placeholder="0 روپے" required>
                     </div>
-                    <div class="form-group">
-                        <label>اسٹاک کی تعداد</label>
-                        <input type="number" id="prodStock" min="0" placeholder="0" required>
+                    <div class="input-group">
+                        <label>اسٹاک مقدار (Quantity)</label>
+                        <input type="number" id="itemQty" min="0" placeholder="0" required>
                     </div>
-                    <div class="form-group">
-                        <label>کیٹیگری</label>
-                        <select id="prodCategory">
-                            <option value="مٹیریل">مٹیریل</option>
-                            <option value="اوزار">اوزار</option>
-                            <option value="دیگر">دیگر</option>
+                    <div class="input-group">
+                        <label>آئٹم کیٹیگری ٹائپ</label>
+                        <select id="itemCategory">
+                            <option value="مٹیریل">ایمبرائیڈری مٹیریل (Material)</option>
+                            <option value="اوزار">کارخانہ اوزار (Tools)</option>
+                            <option value="دیگر">دیگر متفرق اشیاء</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">➕ اسٹاک میں شامل کریں</button>
+                    <button type="submit" class="custom-btn btn-primary-grad">➕ اسٹاک ریکارڈ پش کریں</button>
                 </form>
             </div>
 
             <div class="card">
-                <div class="card-title">🔗 گوگل شیٹ کلاؤڈ سنک</div>
-                <div class="form-group">
-                    <label>گوگل شیٹ آئی ڈی (آئیڈیا سیٹ)</label>
-                    <input type="text" id="sheetId" placeholder="گوگل شیٹ آئی ڈی درج کریں">
+                <div class="card-heading">🔗 گوگل کلاؤڈ لائیو ہم آہنگی پینل</div>
+                <div class="input-group">
+                    <label>گوگل شیٹ مربوط لاگ آئی ڈی</label>
+                    <input type="text" id="cloudLogId" placeholder="سسٹم آئی ڈی کنفیگرڈ ہے">
                 </div>
-                <button class="btn btn-warning" onclick="saveSheetSettings()" style="margin-bottom: 0.5rem;">💾 سیٹنگز محفوظ کریں</button>
-                <button class="btn btn-success" onclick="syncNow()">🔄 Sync Now (ابھی سنک کریں)</button>
-                <div id="syncStatus" class="sync-status">📊 اسٹیٹس: ریڈی</div>
+                <button class="custom-btn btn-secondary-grad" onclick="commitCloudSettings()" style="margin-bottom: 10px;">💾 ترتیب محفوظ کریں</button>
+                <button class="custom-btn btn-primary-grad" style="background: var(--success-gradient);" onclick="triggerSyncToCloud()">🔄 Sync Now (کلاؤڈ ڈیٹا بیس سنک)</button>
+                <div id="syncStatusIndicator" class="sync-status-msg">📊 لائیو کنکشن اسٹیٹس: فعال اور ریڈی</div>
             </div>
         </div>
 
-        <div class="main-layout">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <label>کل کیٹیگریز</label>
-                    <div id="statCategories" class="stat-value">0</div>
+        <div class="main-content-layout">
+            <div class="dashboard-metrics">
+                <div class="metric-card cats">
+                    <div class="metric-title">کل ایکٹو کیٹیگریز</div>
+                    <div id="metricTotalCats" class="metric-value">0</div>
                 </div>
-                <div class="stat-card">
-                    <label>کل آئٹمز قسم</label>
-                    <div id="statProducts" class="stat-value">0</div>
+                <div class="metric-card items">
+                    <div class="metric-title">مجموعی مصنوعات کی اقسام</div>
+                    <div id="metricTotalTypes" class="metric-value">0</div>
                 </div>
-                <div class="stat-card">
-                    <label>کل انوینٹری مالیت</label>
-                    <div id="statValue" class="stat-value">0 روپے</div>
+                <div class="metric-card wealth">
+                    <div class="metric-title">موجودہ اسٹاک کل سرمایہ مالیت</div>
+                    <div id="metricNetWorth" class="metric-value">0 روپے</div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="search-box">
-                    <input type="text" id="searchBar" oninput="searchProducts()" placeholder="🔍 پروڈکٹ کا نام یا کیٹیگری تلاش کریں...">
+                <div class="search-wrapper">
+                    <input type="text" id="liveSearchInput" oninput="runLiveSearch()" placeholder="🔍 نام یا کیٹیگری ٹائپ کر کے لائیو اسٹاک سرچ کریں...">
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-holder">
                     <table>
                         <thead>
                             <tr>
-                                <th>پروڈکٹ کا نام</th>
+                                <th>نام و تفصیل</th>
                                 <th>کیٹیگری</th>
-                                <th>خریداری قیمت</th>
-                                <th>فروخت قیمت</th>
-                                <th>اسٹاک تعداد</th>
-                                <th>اسٹیٹس</th>
-                                <th>ایکشن</th>
+                                <th>قیمت خرید</th>
+                                <th>قیمت فروخت</th>
+                                <th>اسٹاک بیلنس</th>
+                                <th>حالت (Status)</th>
+                                <th>کنٹرول ایکشن</th>
                             </tr>
                         </thead>
-                        <tbody id="productTableBody">
+                        <tbody id="inventoryDataRows">
                             </tbody>
                     </table>
                 </div>
@@ -467,62 +486,62 @@
         </div>
     </div>
 
-    <div id="ownerModal" class="modal">
-        <div class="modal-content">
-            <div class="card-title">🔒 ڈائریکٹر اتھارٹی لاگ ان</div>
-            <div class="form-group">
-                <label>پاس ورڈ درج کریں</label>
-                <input type="password" id="ownerPass" placeholder="••••">
+    <div id="directorModal" class="popup-modal">
+        <div class="popup-box">
+            <div class="card-heading">🔒 ڈائریکٹر اتھارٹی تصدیق لیر</div>
+            <div class="input-group">
+                <label>سیکیورٹی پاس ورڈ فراہم کریں</label>
+                <input type="password" id="directorSecretInput" placeholder="••••">
             </div>
-            <button class="btn btn-primary" onclick="verifyOwner()" style="margin-bottom: 0.5rem;">لاگ ان</button>
-            <button class="btn btn-danger" onclick="closeModal('ownerModal')" style="width: 100%;">منسوخ</button>
-            <p id="regLink" style="text-align: center; margin-top: 1rem; font-size: 0.85rem; display: none;">اکاؤنٹ نہیں ہے؟ <a href="#" onclick="showOwnerRegister()">نیا رجسٹریشن اکاؤنٹ بنائیں</a></p>
+            <button class="custom-btn btn-secondary-grad" onclick="authenticateDirector()" style="margin-bottom: 10px;">لاگ ان اتھارٹی</button>
+            <button class="custom-btn btn-danger-grad" onclick="hideModal('directorModal')">خروج / کینسل</button>
+            <p id="directorRegisterLink" style="text-align: center; margin-top: 15px; font-size: 0.88rem; display: none;">پہلی بار استعمال؟ <a href="#" onclick="switchModalToRegister()" style="color:#3498db; font-weight:700;">نیا رجسٹریشن پینل کھولیں</a></p>
         </div>
     </div>
 
-    <div id="ownerRegisterModal" class="modal">
-        <div class="modal-content">
-            <div class="card-title">📝 نیا ڈائریکٹر اکاؤنٹ بنائیں</div>
-            <div class="form-group">
-                <label>پورا نام</label>
-                <input type="text" id="ownerRegName" placeholder="نام لکھیں">
+    <div id="directorRegModal" class="popup-modal">
+        <div class="popup-box">
+            <div class="card-heading">📝 ماسٹر ڈائریکٹر رجسٹریشن فارم</div>
+            <div class="input-group">
+                <label>پورا نام درج کریں</label>
+                <input type="text" id="regFullName" placeholder="نام">
             </div>
-            <div class="form-group">
-                <label>صارف کا نام (Username)</label>
-                <input type="text" id="ownerRegUsername" placeholder="یوزر نیم">
+            <div class="input-group">
+                <label>صارف شناختی نام (Username)</label>
+                <input type="text" id="regUsername" placeholder="یوزرنیم">
             </div>
-            <div class="form-group">
-                <label>پاس ورڈ</label>
-                <input type="password" id="ownerRegPassword" placeholder="••••">
+            <div class="input-group">
+                <label>سیکیورٹی خفیہ پاس ورڈ</label>
+                <input type="password" id="regPassword" placeholder="••••">
             </div>
-            <div class="form-group">
-                <label>پاس ورڈ کی تصدیق</label>
-                <input type="password" id="ownerRegConfirm" placeholder="••••">
+            <div class="input-group">
+                <label>پاس ورڈ کی دوبارہ تصدیق</label>
+                <input type="password" id="regConfirmPassword" placeholder="••••">
             </div>
-            <button class="btn btn-success" onclick="registerOwner()" style="margin-bottom: 0.5rem;">اکاؤنٹ بنائیں</button>
-            <button class="btn btn-danger" onclick="closeModal('ownerRegisterModal')" style="width: 100%;">بند کریں</button>
+            <button class="custom-btn btn-primary-grad" onclick="processDirectorRegistration()" style="margin-bottom: 10px;">اکاؤنٹ ڈیٹا بیس بنائیں</button>
+            <button class="custom-btn btn-danger-grad" onclick="hideModal('directorRegModal')">بند کریں</button>
         </div>
     </div>
 
-    <div id="superAdminModal" class="modal">
-        <div class="modal-content">
-            <div class="card-title">👑 سپر ایڈمن ڈیش بورڈ</div>
-            <div class="form-group">
-                <label>ماسٹر کوڈ درج کریں</label>
-                <input type="password" id="superAdminPass" placeholder="••••">
+    <div id="superAdminModal" class="popup-modal">
+        <div class="popup-box">
+            <div class="card-heading">👑 سپر ایڈمن ماسٹر اوور رائیڈ لیر</div>
+            <div class="input-group">
+                <label>ماسٹر بائی پاس کوڈ درج کریں</label>
+                <input type="password" id="superAdminCodeInput" placeholder="••••">
             </div>
-            <button class="btn btn-primary" onclick="verifySuperAdmin()" style="margin-bottom: 0.5rem;">پینل کھولیں</button>
-            <button class="btn btn-danger" onclick="closeModal('superAdminModal')" style="width: 100%;">بند کریں</button>
+            <button class="custom-btn btn-secondary-grad" onclick="authenticateSuperAdmin()" style="margin-bottom: 10px;">ماسٹر موڈ لاگ ان</button>
+            <button class="custom-btn btn-danger-grad" onclick="hideModal('superAdminModal')">بند کریں</button>
         </div>
     </div>
 
-    <div id="notification" class="notification">🔔 <span>پیغام</span></div>
+    <div id="appNotificationBox" class="app-notification">🔔 <span>پیغام باکس لائیو</span></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // فائر بیس کانفیگریشن (Firebase Config)
+        // فائر بیس کلاؤڈ کنفیگریشن پیرامیٹرز
         const firebaseConfig = {
             apiKey: "AIzaSyC4MeuXCdF2a3JgZDQtkYYT5NztquYJXmo",
             authDomain: "inventory-store-athar.firebaseapp.com",
@@ -533,211 +552,219 @@
             measurementId: "G-FWPFRDB57R"
         };
 
-        // فائر بیس شروع کرنا
+        // فائر بیس سرور پنگ لاجک
         let db;
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            console.log("Firebase Connection Active");
-        } catch (e) {
-            console.error("Firebase Connection Error: ", e);
+            console.log("Firebase Database Core Connected Intact.");
+        } catch (err) {
+            console.error("Firebase Core Initialization Halted: ", err);
         }
 
-        // لوکل اسٹوریج ویری ایبلز
-        let products = JSON.parse(localStorage.getItem("products")) || [];
-        let isOwner = false;
-        let isSuperAdmin = false;
+        // ڈیٹا بیس ہینڈلنگ گلوبل ویری ایبلز
+        let currentInventoryDataset = JSON.parse(localStorage.getItem("products")) || [];
+        let directorAccessGranted = false;
+        let superAdminAccessGranted = false;
 
+        // ڈوم (DOM) لوڈ انیشلائزیشن کنٹرولر
         window.onload = function() {
-            showProducts();
-            checkExistingOwner();
-            if(localStorage.getItem('theme') === 'dark') {
+            renderInventoryGrid();
+            evaluateSystemUserExistence();
+            if(localStorage.getItem('appThemeMode') === 'dark') {
                 document.body.classList.add('dark-mode');
             }
-            // شیٹ آئی ڈی کی ریڈ لوڈنگ
-            const savedSheetId = localStorage.getItem('google_sheet_id');
-            if (savedSheetId) {
-                document.getElementById('sheetId').value = savedSheetId;
+            const previouslySavedId = localStorage.getItem('google_sheet_id');
+            if (previouslySavedId) {
+                document.getElementById('cloudLogId').value = previouslySavedId;
             }
         };
 
-        function toggleTheme() {
+        function handleThemeSwitch() {
             document.body.classList.toggle('dark-mode');
             if(document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
+                localStorage.setItem('appThemeMode', 'dark');
             } else {
-                localStorage.setItem('theme', 'light');
+                localStorage.setItem('appThemeMode', 'light');
             }
         }
 
-        function showNotification(message, type = 'success') {
-            const notif = document.getElementById('notification');
-            notif.querySelector('span').textContent = message;
-            notif.style.backgroundColor = type === 'error' ? '#e74c3c' : '#2c3e50';
-            notif.classList.add('show');
+        function triggerAppNotification(message, statusType = 'success') {
+            const box = document.getElementById('appNotificationBox');
+            box.querySelector('span').textContent = message;
+            box.style.background = statusType === 'error' ? 'linear-gradient(135deg, #ff416c, #ff4b2b)' : '#2c3e50';
+            box.classList.add('visible');
             setTimeout(() => {
-                notif.classList.remove('show');
+                box.classList.remove('visible');
             }, 3000);
         }
 
-        function openModal(id) {
-            document.getElementById(id).classList.add('show');
+        function triggerModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('show');
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
-        function addProduct() {
-            const name = document.getElementById('prodName').value.trim();
-            const pPrice = parseFloat(document.getElementById('prodPPrice').value) || 0;
-            const sPrice = parseFloat(document.getElementById('prodSPrice').value) || 0;
-            const stock = parseInt(document.getElementById('prodStock').value) || 0;
-            const category = document.getElementById('prodCategory').value;
+        // اسٹاک پروڈکٹ اندراج پش انجن
+        function processFormEntry() {
+            const title = document.getElementById('itemName').value.trim();
+            const bPrice = parseFloat(document.getElementById('itemBuyPrice').value) || 0;
+            const sPrice = parseFloat(document.getElementById('itemSellPrice').value) || 0;
+            const currentQty = parseInt(document.getElementById('itemQty').value) || 0;
+            const selectedCat = document.getElementById('itemCategory').value;
 
-            const newProduct = {
-                id: Date.now().toString(),
-                name,
-                pPrice,
-                sPrice,
-                stock,
-                category
+            const recordObject = {
+                id: "ITEM-" + Date.now(),
+                name: title,
+                pPrice: bPrice,
+                sPrice: sPrice,
+                stock: currentQty,
+                category: selectedCat
             };
 
-            products.push(newProduct);
-            localStorage.setItem("products", JSON.stringify(products));
+            currentInventoryDataset.push(recordObject);
+            localStorage.setItem("products", JSON.stringify(currentInventoryDataset));
             
-            showProducts();
-            document.getElementById('productForm').reset();
-            showNotification("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
+            renderInventoryGrid();
+            document.getElementById('stockForm').reset();
+            triggerAppNotification("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
         }
 
-        function showProducts(filteredProducts = null) {
-            const list = filteredProducts || products;
-            const tbody = document.getElementById('productTableBody');
-            tbody.innerHTML = '';
+        // انوینٹری گرڈ ڈیٹا رینڈرر
+        function renderInventoryGrid(customFilteredSet = null) {
+            const targetSet = customFilteredSet || currentInventoryDataset;
+            const tableBody = document.getElementById('inventoryDataRows');
+            tableBody.innerHTML = '';
 
-            let totalVal = 0;
-            let totalCats = new Set();
+            let netWorthSum = 0;
+            let uniquelyIdentifiedCats = new Set();
 
-            if(list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">کوئی پروڈکٹ موجود نہیں ہے</td></tr>`;
+            if(targetSet.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#7f8c8d; font-weight:600;">اسٹاک ریکارڈ میں کوئی آئٹم موجود نہیں ہے</td></tr>`;
             } else {
-                list.forEach(p => {
-                    totalVal += (p.stock * p.pPrice);
-                    totalCats.add(p.category);
+                targetSet.forEach(item => {
+                    netWorthSum += (item.stock * item.pPrice);
+                    uniquelyIdentifiedCats.add(item.category);
 
-                    const statusBadge = p.stock > 5 ? 
-                        `<span class="badge badge-success">دستیاب</span>` : 
-                        `<span class="badge badge-danger">کم اسٹاک</span>`;
+                    const finalStatusBadge = item.stock > 5 ? 
+                        `<span class="status-pill instock">دستیاب اسٹاک</span>` : 
+                        `<span class="status-pill lowstock">کم اسٹاک الرٹ</span>`;
 
-                    tbody.innerHTML += `
+                    tableBody.innerHTML += `
                         <tr>
-                            <td><strong>${p.name}</strong></td>
-                            <td>${p.category}</td>
-                            <td>${p.pPrice} روپے</td>
-                            <td>${p.sPrice} روپے</td>
-                            <td>${p.stock}</td>
-                            <td>${statusBadge}</td>
-                            <td><button class="btn btn-danger" onclick="deleteProduct('${p.id}')" style="padding: 0.25rem 0.5rem; font-size:0.8rem;">🗑️ حذف</button></td>
+                            <td><strong>${item.name}</strong></td>
+                            <td>${item.category}</td>
+                            <td>${item.pPrice.toLocaleString()} روپے</td>
+                            <td>${item.sPrice.toLocaleString()} روپے</td>
+                            <td><strong>${item.stock}</strong></td>
+                            <td>${finalStatusBadge}</td>
+                            <td><button class="action-del-btn" onclick="executeItemDeletion('${item.id}')">🗑️ حذف</button></td>
                         </tr>
                     `;
                 });
             }
 
-            document.getElementById('statProducts').textContent = list.length;
-            document.getElementById('statCategories').textContent = totalCats.size;
-            document.getElementById('statValue').textContent = totalVal.toLocaleString() + " روپے";
+            document.getElementById('metricTotalTypes').textContent = targetSet.length;
+            document.getElementById('metricTotalCats').textContent = uniquelyIdentifiedCats.size;
+            document.getElementById('metricNetWorth').textContent = netWorthSum.toLocaleString() + " روپے";
         }
 
-        function searchProducts() {
-            const query = document.getElementById('searchBar').value.toLowerCase().trim();
-            if(!query) {
-                showProducts();
+        // لائیو کی بورڈ ان پٹ سرچ فلٹرر
+        function runLiveSearch() {
+            const inputToken = document.getElementById('liveSearchInput').value.toLowerCase().trim();
+            if(!inputToken) {
+                renderInventoryGrid();
                 return;
             }
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
-            showProducts(filtered);
+            const computedFilteredSet = currentInventoryDataset.filter(item => 
+                item.name.toLowerCase().includes(inputToken) || 
+                item.category.toLowerCase().includes(inputToken)
+            );
+            renderInventoryGrid(computedFilteredSet);
         }
 
-        function deleteProduct(id) {
-            if(!isOwner && !isSuperAdmin) {
-                showNotification("❌ معذرت! پروڈکٹ حذف کرنے کے لیے ڈائریکٹر یا سپر ایڈمن لاگ ان ہونا ضروری ہے!", "error");
-                openModal('ownerModal');
+        // اسٹاک آئٹم ڈیلیٹ کنٹرولر لاجک
+        function executeItemDeletion(uniqueId) {
+            if(!directorAccessGranted && !superAdminAccessGranted) {
+                triggerAppNotification("❌ سسٹم الرٹ: آئٹم حذف کرنے کے لیے ڈائریکٹر یا سپر ایڈمن سیکیورٹی ویریفیکیشن لازمی ہے!", "error");
+                triggerModal('directorModal');
                 return;
             }
-            if(confirm("کیا آپ واقعی یہ پروڈکٹ ریکارڈ سے ختم کرنا چاہتے ہیں؟")) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem("products", JSON.stringify(products));
-                showProducts();
-                showNotification("پروڈکٹ کامیابی سے حذف کر دی گئی");
+            if(confirm("کیا آپ واقعی اس پروڈکٹ کو انوینٹری ریکارڈ سے ہمیشہ کے لیے ختم کرنا چاہتے ہیں؟")) {
+                currentInventoryDataset = currentInventoryDataset.filter(item => item.id !== uniqueId);
+                localStorage.setItem("products", JSON.stringify(currentInventoryDataset));
+                renderInventoryGrid();
+                triggerAppNotification("پروڈکٹ کامیابی سے ریکارڈ سے حذف کر دی گئی ہے۔");
             }
         }
 
-        // ================= ٹھیک کی گئی کلاؤڈ سنک لاجک (Firebase Sync Fixes) =================
+        // ================= ٹھیک کی گئی فائر بیس کلاؤڈ سنک لاجک (Firebase Sync System) =================
         function syncToGoogleSheets() {
-            const status = document.getElementById('syncStatus');
-            if (status) {
-                status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
-                status.className = 'sync-status syncing';
+            const statusNode = document.getElementById('syncStatusIndicator');
+            if (statusNode) {
+                statusNode.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
+                statusNode.className = 'sync-status-msg syncing-pulse';
             }
 
-            if (products.length === 0) {
-                if (status) {
-                    status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
-                    status.className = 'sync-status';
+            if (currentInventoryDataset.length === 0) {
+                if (statusNode) {
+                    statusNode.textContent = '❌ کلاؤڈ اپلوڈ فیل: ڈیٹا غائب ہ';
+                    statusNode.className = 'sync-status-msg';
                 }
-                showNotification('اسٹاک میں کوئی پروڈکٹ نہیں ہے جسے سنک کیا جا سکے!', 'error');
+                triggerAppNotification('اسٹاک ڈیٹا بیس خالی ہے، سنک کرنے کے لیے کوئی ریکارڈ نہیں ملا!', 'error');
                 return;
             }
 
             if (!db) {
-                if (status) {
-                    status.textContent = '❌ کلاؤڈ کنکشن غائب';
-                    status.className = 'sync-status';
+                if (statusNode) {
+                    statusNode.textContent = '❌ کلاؤڈ کنکشن فیلور';
+                    statusNode.className = 'sync-status-msg';
                 }
-                showNotification('فائر بیس ڈیٹا بیس لوڈ نہیں ہو سکا!', 'error');
+                triggerAppNotification('گوگل کلاؤڈ سرور کنکشن فعال نہیں ہو سکا!', 'error');
                 return;
             }
 
-            let syncCount = 0;
-            let hasError = false;
+            let individualUploadTracker = 0;
+            let transmissionAnomalyDetected = false;
             
-            products.forEach((product) => {
+            // باری باری لوکل ریکارڈز فائر بیس میں سنک کرنا
+            currentInventoryDataset.forEach((productItem) => {
                 db.collection("inventory").add({
-                    productName: product.name || 'No Name',
-                    productPurchasePrice: product.pPrice || 0,
-                    productSalePrice: product.sPrice || 0,
-                    productStock: product.stock || 0,
-                    productCategory: product.category || 'General',
+                    productName: productItem.name || 'No Name',
+                    productPurchasePrice: productItem.pPrice || 0,
+                    productSalePrice: productItem.sPrice || 0,
+                    productStock: productItem.stock || 0,
+                    productCategory: productItem.category || 'General',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
                 .then(() => {
-                    syncCount++;
-                    if (syncCount === products.length && !hasError) {
-                        if (status) {
-                            status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
-                            status.className = 'sync-status';
+                    individualUploadTracker++;
+                    if (individualUploadTracker === currentInventoryDataset.length && !transmissionAnomalyDetected) {
+                        if (statusNode) {
+                            statusNode.textContent = '✅ کلاؤڈ ڈیٹا ہم آہنگی مکمل';
+                            statusNode.className = 'sync-status-msg';
                         }
-                        showNotification('🔄 تمام اسٹاک مستقل طور پر فائر بیس کلاؤڈ میں محفوظ ہو گیا ہے!');
+                        triggerAppNotification('🔄 ہم آہنگی مکمل: تمام اسٹاک کلاؤڈ سرور پر محفوظ ہو گیا ہے!');
                     }
                 })
-                .catch((error) => {
-                    console.error("فائر بیس سنک میں خرابی: ", error);
-                    hasError = true;
-                    if (status) {
-                        status.textContent = '❌ سنک فیل ہو گیا';
-                        status.className = 'sync-status';
+                .catch((anomaly) => {
+                    console.error("Transmission Error Encountered: ", anomaly);
+                    transmissionAnomalyDetected = true;
+                    if (statusNode) {
+                        statusNode.textContent = '❌ کلاؤڈ ڈیٹا رائٹ ایرر';
+                        statusNode.className = 'sync-status-msg';
                     }
                 });
             });
         }
 
         function saveSheetSettings() {
-            const sheetId = document.getElementById('sheetId').value.trim();
-            if (sheetId) {
-                localStorage.setItem('google_sheet_id', sheetId);
-                showNotification('💾 کلاؤڈ سیٹنگز آئی ڈی محفوظ ہو گئی');
+            const idValue = document.getElementById('cloudLogId').value.trim();
+            if (idValue) {
+                localStorage.setItem('google_sheet_id', idValue);
+                triggerAppNotification('💾 گوگل شیٹ آئی ڈی کنفیگریشن محفوظ کر دی گئی ہ');
             }
         }
 
@@ -745,67 +772,71 @@
             syncToGoogleSheets();
         }
 
-        // اتھارٹی چیکس پینل
-        function checkExistingOwner() {
-            const localOwner = localStorage.getItem('owner_account');
-            if (!localOwner) {
-                document.getElementById('regLink').style.display = 'block';
+        function commitCloudSettings() {
+            saveSheetSettings();
+        }
+
+        // ایڈمنسٹریشن سیکیورٹی ویریفیکیشن انجن لاجک
+        function evaluateSystemUserExistence() {
+            const masterUserRecord = localStorage.getItem('owner_account');
+            if (!masterUserRecord) {
+                document.getElementById('directorRegisterLink').style.display = 'block';
             }
         }
 
-        function verifyOwner() {
-            const pass = document.getElementById('ownerPass').value;
-            const savedOwner = JSON.parse(localStorage.getItem('owner_account'));
+        function authenticateDirector() {
+            const typedSecret = document.getElementById('directorSecretInput').value;
+            const savedCredentialsObject = JSON.parse(localStorage.getItem('owner_account'));
 
-            if (savedOwner && pass === savedOwner.password) {
-                isOwner = true;
-                showNotification("🔓 ڈائریکٹر اتھارٹی تصدیق شدہ!");
-                closeModal('ownerModal');
-            } else if (!savedOwner && pass === "1234") {
-                isOwner = true;
-                showNotification("🔓 ڈائریکٹر لاگ ان کامیاب (بیک اپ کوڈ)!");
-                closeModal('ownerModal');
+            if (savedCredentialsObject && typedSecret === savedCredentialsObject.password) {
+                directorAccessGranted = true;
+                triggerAppNotification("🔓 ڈائریکٹر کنٹرول لیول اتھارٹی فعال ہو گئی!");
+                hideModal('directorModal');
+            } else if (!savedCredentialsObject && typedSecret === "1234") {
+                directorAccessGranted = true;
+                triggerAppNotification("🔓 ڈائریکٹر پینل عارضی ماسٹر کوڈ سے لاگ ان کامیاب!");
+                hideModal('directorModal');
             } else {
-                showNotification("❌ غلط پاس ورڈ درج کیا گیا ہے!", "error");
+                triggerAppNotification("❌ سیکیورٹی ڈینائیڈ: غلط پاس ورڈ فراہم کیا گیا ہے!", "error");
             }
         }
 
-        function verifySuperAdmin() {
-            const pass = document.getElementById('superAdminPass').value;
-            if(pass === "admin786" || pass === "supermaster") {
-                isSuperAdmin = true;
-                showNotification("👑 سپر ایڈمن موڈ فعال ہو گیا ہے!");
-                closeModal('superAdminModal');
+        function authenticateSuperAdmin() {
+            const masterKey = document.getElementById('superAdminCodeInput').value;
+            if(masterKey === "admin786" || masterKey === "supermaster") {
+                superAdminAccessGranted = true;
+                triggerAppNotification("👑 سپر ایڈمن روٹ کمانڈ موڈ مکمل فعال!");
+                hideModal('superAdminModal');
             } else {
-                showNotification("❌ ماسٹر پاس ورڈ غلط ہے!", "error");
+                triggerAppNotification("❌ ماسٹر کی بائی پاس سسٹم مسترد کوڈ غلط ہے!", "error");
             }
         }
 
-        function showOwnerRegister() {
-            closeModal('ownerModal');
-            openModal('ownerRegisterModal');
+        function switchModalToRegister() {
+            hideModal('directorModal');
+            triggerModal('directorRegModal');
         }
 
-        function registerOwner() {
-            const name = document.getElementById('ownerRegName').value.trim();
-            const username = document.getElementById('ownerRegUsername').value.trim();
-            const password = document.getElementById('ownerRegPassword').value;
-            const confirm = document.getElementById('ownerRegConfirm').value;
+        function processDirectorRegistration() {
+            const fullIdentityTitle = document.getElementById('regFullName').value.trim();
+            const requestedUid = document.getElementById('regUsername').value.trim();
+            const secretPasswordToken = document.getElementById('regPassword').value;
+            const verificationPasswordToken = document.getElementById('regConfirmPassword').value;
 
-            if (!name || !username || !password) {
-                showNotification("❌ تمام فیلڈز فل کرنا ضروری ہیں", 'error');
+            if (!fullIdentityTitle || !requestedUid || !secretPasswordToken) {
+                triggerAppNotification("❌ رجسٹریشن بلاکڈ: فارم کی تمام فیلڈز پر کرنا لازم ہے!", 'error');
                 return;
             }
-            if (password !== confirm) {
-                showNotification("❌ پاس ورڈ میچ نہیں ہوا", 'error');
+            if (secretPasswordToken !== verificationPasswordToken) {
+                triggerAppNotification("❌ پاس ورڈ مس میچ: تصدیقی پاس ورڈ مماثلت نہیں رکھتا!", 'error');
                 return;
             }
 
-            const ownerObj = { name, username, password };
-            localStorage.setItem('owner_account', JSON.stringify(ownerObj));
-            showNotification("💾 نیا ڈائریکٹر رجسٹر ہو چکا ہے!");
-            closeModal('ownerRegisterModal');
-            openModal('ownerModal');
+            const masterDirectorAccount = { name: fullIdentityTitle, username: requestedUid, password: secretPasswordToken };
+            localStorage.setItem('owner_account', JSON.stringify(masterDirectorAccount));
+            triggerAppNotification("💾 نیا ڈائریکٹر پروفائل ڈیٹا بیس میں محفوظ کر دیا گیا ہے!");
+            hideModal('directorRegModal');
+            triggerModal('directorModal');
         }
     </script>
 </body>
