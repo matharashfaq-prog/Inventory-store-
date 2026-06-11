@@ -3,1462 +3,810 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پراڈکٹ انوینٹری سسٹم</title>
-    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <title>انوینٹری مینجمنٹ سسٹم - Ather Software</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; padding: 10px; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        
-        /* لاگ ان سکرین */
-        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); width: 100%; max-width: 450px; text-align: center; }
-        .login-box h1 { color: #0f3460; margin-bottom: 10px; font-size: 28px; }
-        .login-box p { color: #666; margin-bottom: 25px; }
-        
-        .role-selector { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
-        .role-btn { padding: 15px; border: 2px solid #ddd; background: white; border-radius: 10px; cursor: pointer; transition: all 0.3s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-direction: column; }
-        .role-btn:hover { border-color: #0f3460; transform: translateY(-2px); }
-        .role-btn.selected { border-color: #0f3460; background: #0f3460; color: white; }
-        
-        .login-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 12px; font-size: 16px; }
-        .login-input:focus { outline: none; border-color: #0f3460; }
-        
-        .btn { padding: 14px 24px; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: all 0.3s; margin: 5px; font-weight: 600; }
-        .btn-primary { background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); color: white; width: 100%; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-warning { background: #ffc107; color: #333; }
-        .btn-info { background: #17a2b8; color: white; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .btn-outline { background: transparent; border: 2px solid #0f3460; color: #0f3460; }
-        .btn-outline:hover { background: #0f3460; color: white; }
-        
-        /* ہیڈر */
-        .app-header { background: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #0f3460, #e94560); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-        .role-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
-        .role-owner { background: #e94560; }
-        .role-account_owner { background: #9c27b0; }
-        .role-manager { background: #0f3460; }
-        .role-salesman { background: #17a2b8; }
-        
-        /* ٹیبز */
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .tab { padding: 12px 20px; background: rgba(255,255,255,0.15); color: white; border: none; border-radius: 10px; cursor: pointer; white-space: nowrap; transition: all 0.3s; font-size: 15px; }
-        .tab.active { background: white; color: #0f3460; font-weight: bold; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* اسکینر */
-        .scanner-container { text-align: center; }
-        #reader { width: 100% !important; border-radius: 10px; overflow: hidden; margin: 15px 0; }
-        .camera-status { padding: 14px; border-radius: 10px; margin: 10px 0; font-size: 14px; font-weight: 500; }
-        .status-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        
-        /* فارمز */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-        
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
-        .input-group input, .input-group select { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: #0f3460; }
-        
-        .price-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .price-box { padding: 20px; border-radius: 12px; text-align: center; border: 2px solid; }
-        .price-box.cost { background: #fff8e1; border-color: #ffc107; }
-        .price-box.sale { background: #e8f5e9; border-color: #28a745; }
-        .price-label { font-size: 13px; color: #666; margin-bottom: 8px; font-weight: 600; }
-        .price-value { font-size: 28px; font-weight: bold; color: #333; }
-        .price-box input { width: 100%; border: none; background: transparent; text-align: center; font-size: 24px; font-weight: bold; color: #333; }
-        .price-box input:focus { outline: none; }
-        
-        /* ٹیبل */
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th, td { padding: 14px; text-align: right; border-bottom: 1px solid #e0e0e0; }
-        th { background: #f5f5f5; font-weight: bold; color: #333; position: sticky; top: 0; }
-        tr:hover { background: #fafafa; }
-        .category-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
-        .actions { display: flex; gap: 5px; }
-        .btn-small { padding: 6px 12px; font-size: 12px; }
-        
-        /* اسٹاف */
-        .staff-card { background: #f8f9fa; padding: 18px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-right: 4px solid #0f3460; }
-        
-        /* نوٹیفکیشن */
-        .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 16px 32px; border-radius: 12px; color: white; font-weight: bold; box-shadow: 0 8px 25px rgba(0,0,0,0.3); display: none; z-index: 3000; animation: slideDown 0.4s; min-width: 300px; text-align: center; }
-        @keyframes slideDown { from { transform: translateX(-50%) translateY(-100%); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-        
-        /* مودال */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s; }
-        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
-        .modal-header h3 { margin: 0; color: #0f3460; }
-        .close-x { font-size: 28px; cursor: pointer; color: #999; background: none; border: none; padding: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s; }
-        .close-x:hover { background: #f0f0f0; color: #333; }
-        
-        /* ڈیش بورڈ */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .stat-box:hover { transform: translateY(-5px); }
-        .stat-box .number { font-size: 36px; font-weight: bold; color: #0f3460; }
-        .stat-box .label { color: #666; margin-top: 8px; font-size: 14px; }
-        
-        .hidden { display: none !important; }
-        .empty-state { text-align: center; padding: 50px; color: #999; font-size: 16px; }
-        .sync-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #2e7d32; }
-        .sync-status.syncing { background: #fff3e0; color: #ef6c00; }
-        .sync-status.error { background: #ffebee; color: #c62828; }
-        .section-title { color: #0f3460; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
-        .info-text { background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; color: #1565c0; font-size: 14px; line-height: 1.6; }
-        .toggle-link { color: #0f3460; cursor: pointer; text-decoration: underline; font-size: 14px; margin-top: 15px; display: inline-block; }
-        .stock-low { color: #dc3545; font-weight: bold; }
-        .stock-ok { color: #28a745; font-weight: bold; }
-        
-        /* سپر ایڈمن ٹرگر */
-        .admin-trigger { position: fixed; bottom: 0; left: 0; width: 100%; height: 5px; opacity: 0; cursor: default; z-index: 9999; }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --transition: all 0.3s ease;
+            --dark-bg: #1a202c;
+            --dark-card: #2d3748;
+            --dark-text: #e2e8f0;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .card, 
+        body.dark-mode .stat-card, 
+        body.dark-mode .modal-content,
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: #4a5568;
+        }
+
+        body.dark-mode th {
+            background-color: #4a5568;
+            color: var(--dark-text);
+        }
+
+        body.dark-mode td {
+            border-bottom-color: #4a5568;
+            color: var(--dark-text);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Nastaliq Urdu', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+            transition: var(--transition);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-mode .card-title {
+            border-bottom-color: #4a5568;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        body.dark-mode label {
+            color: #cbd5e0;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: #fff;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary { background-color: var(--accent-color); color: white; }
+        .btn-primary:hover { background-color: #2980b9; }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .btn-success:hover { background-color: #27ae60; }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-danger:hover { background-color: #c0392b; }
+        .btn-warning { background-color: var(--warning-color); color: white; }
+        .btn-warning:hover { background-color: #d35400; }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        body.dark-mode .table-responsive {
+            border-color: #4a5568;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background-color: rgba(46, 204, 113, 0.15); color: #27ae60; }
+        .badge-danger { background-color: rgba(231, 76, 60, 0.15); color: #c0392b; }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 0.25rem;
+        }
+
+        body.dark-mode .stat-value {
+            color: var(--accent-color);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .sync-status {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .syncing {
+            color: var(--accent-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .top-buttons {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
     </style>
 </head>
 <body>
 
-<div id="loginScreen" class="login-screen">
-    <div class="login-box">
-        <div style="font-size: 60px; margin-bottom: 10px;">📦</div>
-        <h1>انوینٹری سسٹم</h1>
-        <p>اپنا کردار منتخب کریں</p>
-        
-        <div class="role-selector" id="loginRoleSelector">
-            <button class="role-btn selected" onclick="selectRole('account_owner')" id="roleAccount">
-                <span style="font-size: 24px;">🏪</span>
-                <span>اکاؤنٹ اونر</span>
-            </button>
-            <button class="role-btn" onclick="selectRole('manager')" id="roleManager">
-                <span style="font-size: 24px;">👔</span>
-                <span>منیجر</span>
-            </button>
-            <button class="role-btn" onclick="selectRole('salesman')" id="roleSalesman">
-                <span style="font-size: 24px;">🛒</span>
-                <span>سیلزمین</span>
-            </button>
+    <header class="header">
+        <div class="theme-toggle">
+            <button class="nav-btn" onclick="toggleTheme()">🌓 تھیم تبدیل کریں</button>
         </div>
-
-        <div id="loginForm">
-            <input type="text" class="login-input" id="loginUsername" placeholder="📧 صارف نام">
-            <input type="password" class="login-input" id="loginPassword" placeholder="🔒 پاس ورڈ">
-            <button class="btn btn-primary" onclick="login()" style="margin-top: 10px;">
-                🔓 لاگ ان
-            </button>
+        <div class="top-buttons">
+            <button class="nav-btn" onclick="openModal('superAdminModal')">👑 سپر ایڈمن</button>
+            <button class="nav-btn" onclick="openModal('ownerModal')">🔒 ڈائریکٹر لاگ ان</button>
         </div>
+        <h1>انوینٹری اسٹور پینل</h1>
+        <p>Ather Software — کلاؤڈ انٹیگریٹڈ اسٹاک مینجمنٹ</p>
+    </header>
 
-        <div id="ownerRegisterLink" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-            <span style="color: #999; font-size: 13px;">اکاؤنٹ نہیں ہے؟</span><br>
-            <span class="toggle-link" onclick="showOwnerRegister()">
-                📝 نیا اکاؤنٹ اونر بنائیں
-            </span>
-        </div>
-    </div>
-</div>
-
-<div class="admin-trigger" id="adminTrigger" onclick="handleAdminTrigger()"></div>
-
-<div class="modal-overlay" id="adminLoginModal" style="z-index: 5000;">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3>👑 سپر ایڈمن لاگ ان</h3>
-            <button class="close-x" onclick="closeAdminModal()">&times;</button>
-        </div>
-        <div class="info-text" style="background: #ffebee; color: #c62828;">
-            ⚠️ یہ صرف سسٹم ایڈمنسٹریٹر کے لیے ہے
-        </div>
-        <div class="input-group">
-            <label>صارف نام</label>
-            <input type="text" id="adminUsername" value="superadmin" readonly style="background: #f5f5f5;">
-        </div>
-        <div class="input-group">
-            <label>پاس ورڈ</label>
-            <input type="password" id="adminPassword" placeholder="سپر ایڈمن پاس ورڈ درج کریں">
-        </div>
-        <button class="btn btn-primary" onclick="adminLogin()" style="width: 100%; margin-top: 10px;">
-            🔓 لاگ ان
-        </button>
-    </div>
-</div>
-
-<div id="mainApp" class="container hidden">
-
-    <div class="app-header">
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar">U</div>
-            <div>
-                <div style="font-weight: bold; font-size: 16px;" id="userName">صارف</div>
-                <span class="role-badge" id="userRole">سیلزمین</span>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="sync-status" id="syncStatus">✅ ہم آہنگ</span>
-            <button class="btn btn-danger btn-small" onclick="logout()">🚪 لاگ آؤٹ</button>
-        </div>
-    </div>
-
-    <div class="tabs" id="mainTabs">
-        <button class="tab active" onclick="showTab('dashboard')">📊 ڈیش بورڈ</button>
-        <button class="tab" onclick="showTab('scan')">📷 اسکین</button>
-        <button class="tab" onclick="showTab('products')">📦 پراڈکٹس</button>
-        <button class="tab" onclick="showTab('sales')">💰 سیلز</button>
-        <button class="tab owner-tab hidden" onclick="showTab('staff')">👥 اسٹاف</button>
-        <button class="tab owner-tab hidden" onclick="showTab('settings')">⚙️ سیٹنگز</button>
-    </div>
-
-    <div id="tab-dashboard" class="tab-content active">
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="number" id="dashTotalProducts">0</div>
-                <div class="label">کل پراڈکٹس</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="dashTotalItems">0</div>
-                <div class="label">کل آئٹمز</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="dashCategories">0</div>
-                <div class="label">کیٹیگریز</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="dashSales">0</div>
-                <div class="label">آج کی سیلز</div>
-            </div>
-            <div class="stat-box owner-only-stat hidden" id="dashProfitBox">
-                <div class="number" id="dashProfit">₹0</div>
-                <div class="label">آج کا منافع</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 class="section-title">📈 حالیہ سرگرمیاں</h3>
-            <div id="recentActivity">
-                <div class="empty-state">کوئی سرگرمی نہیں</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-scan" class="tab-content">
-        <div class="card">
-            <div class="scanner-container">
-                <h3 class="section-title">📷 کیمرے سے اسکین کریں</h3>
-                <div id="cameraStatus" class="camera-status status-info">
-                    🔘 کیمرہ بند ہے - "کیمرہ آن کریں" پر کلک کریں
-                </div>
-                <div id="reader"></div>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-primary" onclick="startScanner()">📷 کیمرہ آن کریں</button>
-                    <button class="btn btn-danger" onclick="stopScanner()">⏹️ بند کریں</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 class="section-title">✍️ دستی اندراج</h3>
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>بارکوڈ نمبر *</label>
-                    <input type="text" id="manualBarcode" placeholder="بارکوڈ اسکین کریں یا لکھیں">
-                </div>
-                <div class="input-group">
-                    <label>پراڈکٹ کا نام *</label>
-                    <input type="text" id="manualName" placeholder="پراڈکٹ کا نام">
-                </div>
-                <div class="input-group">
-                    <label>کیٹیگری</label>
-                    <select id="manualCategory">
-                        <option value="گروسری">گروسری</option>
-                        <option value="الیکٹرانکس">الیکٹرانکس</option>
-                        <option value="کپڑے">کپڑے</option>
-                        <option value="دوائیں">دوائیں</option>
-                        <option value="کاسمیٹکس">کاسمیٹکس</option>
-                        <option value="دیگر">دیگر</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>مقدار (تعداد)</label>
-                    <input type="number" id="manualQuantity" value="1" min="1">
-                </div>
-            </div>
-
-            <div id="ownerPrices" style="margin-top: 20px;">
-                <h4 style="margin-bottom: 15px; color: #e94560;">💰 قیمتیں (صرف اونر کے لیے)</h4>
-                <div class="price-inputs">
-                    <div class="price-box cost">
-                        <div class="price-label">🛒 خرید قیمت (Cost)</div>
-                        <input type="number" id="costPrice" placeholder="0.00" step="0.01">
+    <div class="container">
+        <div class="sidebar-layout">
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-title">📦 پروڈکٹ انٹری</div>
+                <form id="productForm" onsubmit="event.preventDefault(); addProduct();">
+                    <div class="form-group">
+                        <label>پروڈکٹ کا نام</label>
+                        <input type="text" id="prodName" placeholder="نام لکھیں" required>
                     </div>
-                    <div class="price-box sale">
-                        <div class="price-label">🏷️ فروخت قیمت (Sale)</div>
-                        <input type="number" id="salePrice" placeholder="0.00" step="0.01">
+                    <div class="form-group">
+                        <label>خریداری قیمت (روپے)</label>
+                        <input type="number" id="prodPPrice" min="0" placeholder="0" required>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label>فروخت قیمت (روپے)</label>
+                        <input type="number" id="prodSPrice" min="0" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>اسٹاک کی تعداد</label>
+                        <input type="number" id="prodStock" min="0" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>کیٹیگری</label>
+                        <select id="prodCategory">
+                            <option value="مٹیریل">مٹیریل</option>
+                            <option value="اوزار">اوزار</option>
+                            <option value="دیگر">دیگر</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">➕ اسٹاک میں شامل کریں</button>
+                </form>
             </div>
 
-            <div id="staffPrices" class="hidden" style="margin-top: 20px;">
-                <div class="input-group">
-                    <label>🏷️ فروخت قیمت</label>
-                    <input type="number" id="staffSalePrice" placeholder="فروخت قیمت درج کریں" step="0.01">
+            <div class="card">
+                <div class="card-title">🔗 گوگل شیٹ کلاؤڈ سنک</div>
+                <div class="form-group">
+                    <label>گوگل شیٹ آئی ڈی (آئیڈیا سیٹ)</label>
+                    <input type="text" id="sheetId" placeholder="گوگل شیٹ آئی ڈی درج کریں">
                 </div>
+                <button class="btn btn-warning" onclick="saveSheetSettings()" style="margin-bottom: 0.5rem;">💾 سیٹنگز محفوظ کریں</button>
+                <button class="btn btn-success" onclick="syncNow()">🔄 Sync Now (ابھی سنک کریں)</button>
+                <div id="syncStatus" class="sync-status">📊 اسٹیٹس: ریڈی</div>
             </div>
-
-            <button class="btn btn-success" onclick="addProduct()" style="width: 100%; margin-top: 25px; padding: 16px;">
-                ➕ پراڈکٹ شامل کریں
-            </button>
-        </div>
-    </div>
-
-    <div id="tab-products" class="tab-content">
-        <div class="card">
-            <h3 class="section-title">📦 پراڈکٹس کی فہرست</h3>
-            <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="searchProduct" placeholder="🔍 نام، بارکوڈ یا کیٹیگری سے تلاش..." 
-                       style="flex: 1; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px;" 
-                       onkeyup="renderProducts()">
-                <button class="btn btn-primary" onclick="exportData('json')">📥 JSON</button>
-                <button class="btn btn-warning" onclick="exportData('csv')">📄 CSV</button>
-            </div>
-            <div class="table-container" id="productsTable">
-                <div class="empty-state">📭 کوئی پراڈکٹ نہیں</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-sales" class="tab-content">
-        <div class="card">
-            <h3 class="section-title">💰 نئی سیل</h3>
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>بارکوڈ اسکین کریں یا لکھیں</label>
-                    <input type="text" id="saleBarcode" placeholder="بارکوڈ درج کریں" onchange="findProductForSale()">
-                </div>
-                <div class="input-group">
-                    <label>پراڈکٹ کا نام</label>
-                    <input type="text" id="saleProductName" readonly placeholder="خودکار آ جائے گا" style="background: #f5f5f5;">
-                </div>
-                <div class="input-group">
-                    <label>مقدار</label>
-                    <input type="number" id="saleQuantity" value="1" min="1" onchange="calculateSaleTotal()">
-                </div>
-                <div class="input-group">
-                    <label>فی یونٹ قیمت</label>
-                    <input type="number" id="saleUnitPrice" readonly style="background: #f5f5f5;">
-                </div>
-            </div>
-            <div class="price-box sale" style="margin: 20px 0;">
-                <div class="price-label">کل رقم</div>
-                <div class="price-value" id="saleTotal" style="font-size: 36px;">₹0.00</div>
-            </div>
-            <button class="btn btn-success" onclick="makeSale()" style="width: 100%; padding: 16px; font-size: 18px;">
-                💰 سیل مکمل کریں
-            </button>
         </div>
 
-        <div class="card">
-            <h3 class="section-title">📋 سیلز کی تاریخ</h3>
-            <div id="salesHistory">
-                <div class="empty-state">کوئی سیل ریکارڈ نہیں</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-staff" class="tab-content">
-        <div class="card">
-            <h3 class="section-title">➕ نیا اسٹاف شامل کریں</h3>
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>پورا نام *</label>
-                    <input type="text" id="staffName" placeholder="ملازم کا پورا نام">
+        <div class="main-layout">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <label>کل کیٹیگریز</label>
+                    <div id="statCategories" class="stat-value">0</div>
                 </div>
-                <div class="input-group">
-                    <label>صارف نام * (یونیک)</label>
-                    <input type="text" id="staffUsername" placeholder="جیسے: ali123">
+                <div class="stat-card">
+                    <label>کل آئٹمز قسم</label>
+                    <div id="statProducts" class="stat-value">0</div>
                 </div>
-                <div class="input-group">
-                    <label>پاس ورڈ *</label>
-                    <input type="password" id="staffPassword" placeholder="پاس ورڈ">
-                </div>
-                <div class="input-group">
-                    <label>کردار *</label>
-                    <select id="staffRole">
-                        <option value="manager">👔 منیجر</option>
-                        <option value="salesman">🛒 سیلزمین</option>
-                    </select>
+                <div class="stat-card">
+                    <label>کل انوینٹری مالیت</label>
+                    <div id="statValue" class="stat-value">0 روپے</div>
                 </div>
             </div>
-            <button class="btn btn-success" onclick="addStaff()" style="width: 100%; margin-top: 15px; padding: 16px;">
-                ✅ اسٹاف شامل کریں
-            </button>
-        </div>
 
-        <div class="card">
-            <h3 class="section-title">📋 میرا اسٹاف</h3>
-            <div id="staffList">
-                <div class="empty-state">👥 ابھی تک کوئی اسٹاف نہیں</div>
+            <div class="card">
+                <div class="search-box">
+                    <input type="text" id="searchBar" oninput="searchProducts()" placeholder="🔍 پروڈکٹ کا نام یا کیٹیگری تلاش کریں...">
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>پروڈکٹ کا نام</th>
+                                <th>کیٹیگری</th>
+                                <th>خریداری قیمت</th>
+                                <th>فروخت قیمت</th>
+                                <th>اسٹاک تعداد</th>
+                                <th>اسٹیٹس</th>
+                                <th>ایکشن</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="tab-settings" class="tab-content">
-        <div class="card">
-            <h3 class="section-title">☁️ گوگل شیٹس سیٹ اپ</h3>
-            <div class="info-text">
-                📋 <strong>گوگل شیٹس سے کیسے منسلک کریں:</strong><br>
-                1. Google Sheets میں نئی شیٹ بنائیں<br>
-                2. شیئر کریں → Anyone with link → Viewer<br>
-                3. شیٹ کا ID کاپی کریں (URL سے)<br>
-                4. یہاں پیسٹ کریں
+    <div id="ownerModal" class="modal">
+        <div class="modal-content">
+            <div class="card-title">🔒 ڈائریکٹر اتھارٹی لاگ ان</div>
+            <div class="form-group">
+                <label>پاس ورڈ درج کریں</label>
+                <input type="password" id="ownerPass" placeholder="••••">
             </div>
-            <div class="input-group">
-                <label>گوگل شیٹ ID</label>
-                <input type="text" id="sheetId" placeholder="مثال: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+            <button class="btn btn-primary" onclick="verifyOwner()" style="margin-bottom: 0.5rem;">لاگ ان</button>
+            <button class="btn btn-danger" onclick="closeModal('ownerModal')" style="width: 100%;">منسوخ</button>
+            <p id="regLink" style="text-align: center; margin-top: 1rem; font-size: 0.85rem; display: none;">اکاؤنٹ نہیں ہے؟ <a href="#" onclick="showOwnerRegister()">نیا رجسٹریشن اکاؤنٹ بنائیں</a></p>
+        </div>
+    </div>
+
+    <div id="ownerRegisterModal" class="modal">
+        <div class="modal-content">
+            <div class="card-title">📝 نیا ڈائریکٹر اکاؤنٹ بنائیں</div>
+            <div class="form-group">
+                <label>پورا نام</label>
+                <input type="text" id="ownerRegName" placeholder="نام لکھیں">
             </div>
-            <button class="btn btn-primary" onclick="saveSheetSettings()" style="width: 100%; margin-top: 10px;">
-                💾 سیٹنگز محفوظ کریں
-            </button>
-        </div>
-
-        <div class="card" style="margin-top: 15px;">
-            <h3 class="section-title">🗑️ ڈیٹا مینجمنٹ</h3>
-            <button class="btn btn-warning" onclick="syncNow()" style="width: 100%; margin-bottom: 10px; padding: 14px;">
-                🔄 ابھی ہم آہنگ کریں
-            </button>
-            <button class="btn btn-danger" onclick="clearAllData()" style="width: 100%; padding: 14px;">
-                ⚠️ تمام ڈیٹا حذف کریں
-            </button>
+            <div class="form-group">
+                <label>صارف کا نام (Username)</label>
+                <input type="text" id="ownerRegUsername" placeholder="یوزر نیم">
+            </div>
+            <div class="form-group">
+                <label>پاس ورڈ</label>
+                <input type="password" id="ownerRegPassword" placeholder="••••">
+            </div>
+            <div class="form-group">
+                <label>پاس ورڈ کی تصدیق</label>
+                <input type="password" id="ownerRegConfirm" placeholder="••••">
+            </div>
+            <button class="btn btn-success" onclick="registerOwner()" style="margin-bottom: 0.5rem;">اکاؤنٹ بنائیں</button>
+            <button class="btn btn-danger" onclick="closeModal('ownerRegisterModal')" style="width: 100%;">بند کریں</button>
         </div>
     </div>
-</div>
 
-<div class="modal-overlay" id="ownerRegisterModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3>📝 نیا اکاؤنٹ اونر بنائیں</h3>
-            <button class="close-x" onclick="closeOwnerRegister()">&times;</button>
+    <div id="superAdminModal" class="modal">
+        <div class="modal-content">
+            <div class="card-title">👑 سپر ایڈمن ڈیش بورڈ</div>
+            <div class="form-group">
+                <label>ماسٹر کوڈ درج کریں</label>
+                <input type="password" id="superAdminPass" placeholder="••••">
+            </div>
+            <button class="btn btn-primary" onclick="verifySuperAdmin()" style="margin-bottom: 0.5rem;">پینل کھولیں</button>
+            <button class="btn btn-danger" onclick="closeModal('superAdminModal')" style="width: 100%;">بند کریں</button>
         </div>
-        <div class="info-text">
-            🏪 <strong>اکاؤنٹ اونر رجسٹریشن</strong><br>
-            یہ اکاؤنٹ آپ کا مالکانہ اکاؤنٹ ہوگی۔ اس سے آپ منیجر اور سیلزمین بنا سکیں گے۔
-        </div>
-        <div class="input-group">
-            <label>پورا نام *</label>
-            <input type="text" id="ownerRegName" placeholder="اپنا پورا نام">
-        </div>
-        <div class="input-group">
-            <label>صارف نام * (یونیک)</label>
-            <input type="text" id="ownerRegUsername" placeholder="جیسے: shop123">
-        </div>
-        <div class="input-group">
-            <label>پاس ورڈ *</label>
-            <input type="password" id="ownerRegPassword" placeholder="کم از کم 4 حروف">
-        </div>
-        <div class="input-group">
-            <label>پاس ورڈ تصدیق *</label>
-            <input type="password" id="ownerRegConfirm" placeholder="پاس ورڈ دوبارہ">
-        </div>
-        <button class="btn btn-success" onclick="registerOwner()" style="width: 100%; margin-top: 10px; padding: 14px;">
-            ✅ اکاؤنٹ بنائیں
-        </button>
     </div>
-</div>
 
-<div class="modal-overlay" id="editModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3>✏️ پراڈکٹ میں ترمیم</h3>
-            <button class="close-x" onclick="closeModal()">&times;</button>
-        </div>
-        <div class="input-group">
-            <label>پراڈکٹ کا نام</label>
-            <input type="text" id="editName">
-        </div>
-        <div class="input-group">
-            <label>بارکوڈ</label>
-            <input type="text" id="editBarcode">
-        </div>
-        <div class="input-group">
-            <label>کیٹیگری</label>
-            <select id="editCategory">
-                <option value="گروسری">گروسری</option>
-                <option value="الیکٹرانکس">الیکٹرانکس</option>
-                <option value="کپڑے">کپڑے</option>
-                <option value="دوائیں">دوائیں</option>
-                <option value="کاسمیٹکس">کاسمیٹکس</option>
-                <option value="دیگر">دیگر</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>مقدار</label>
-            <input type="number" id="editQuantity" min="0">
-        </div>
-        <div class="input-group owner-edit-price" id="editCostSection">
-            <label>🛒 خرید قیمت (صرف اونر)</label>
-            <input type="number" id="editCostPrice" step="0.01">
-        </div>
-        <div class="input-group">
-            <label>🏷️ فروخت قیمت</label>
-            <input type="number" id="editSalePrice" step="0.01">
-        </div>
-        <button class="btn btn-success" onclick="saveEdit()" style="width: 100%; margin-top: 10px; padding: 14px;">
-            💾 تبدیلیاں محفوظ کریں
-        </button>
-    </div>
-</div>
+    <div id="notification" class="notification">🔔 <span>پیغام</span></div>
 
-<div class="notification" id="notification"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<script>
-// ==================== سپر ایڈمن کنفیگریشن (ہڈن) ====================
-const SUPER_ADMIN = {
-    username: 'superadmin',
-    password: 'Admin@2024!',  // ← یہاں اپنا پاس ورڈ تبدیل کریں
-    name: 'سپر ایڈمن',
-    role: 'owner'
-};
-
-// ==================== گلوبل ویری ایبلز ====================
-let currentUser = null;
-let scanner = null;
-let editingId = null;
-let selectedRole = 'account_owner';
-let adminClickCount = 0;
-let adminClickTimer = null;
-
-// ڈیٹا
-let products = [];
-let sales = [];
-let activities = [];
-
-// ==================== سپر ایڈمن ٹرigger ====================
-function handleAdminTrigger() {
-    adminClickCount++;
-    if (adminClickTimer) clearTimeout(adminClickTimer);
-    adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2000);
-    if (adminClickCount >= 5) {
-        adminClickCount = 0;
-        document.getElementById('adminLoginModal').style.display = 'flex';
-        setTimeout(() => document.getElementById('adminPassword').focus(), 100);
-    }
-}
-
-function closeAdminModal() {
-    document.getElementById('adminLoginModal').style.display = 'none';
-    document.getElementById('adminPassword').value = '';
-}
-
-function adminLogin() {
-    const password = document.getElementById('adminPassword').value;
-    if (password === SUPER_ADMIN.password) {
-        currentUser = {
-            id: 'superadmin',
-            name: SUPER_ADMIN.name,
-            username: SUPER_ADMIN.username,
-            password: SUPER_ADMIN.password,
-            role: SUPER_ADMIN.role
+    <script>
+        // فائر بیس کانفیگریشن (Firebase Config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4MeuXCdF2a3JgZDQtkYYT5NztquYJXmo",
+            authDomain: "inventory-store-athar.firebaseapp.com",
+            projectId: "inventory-store-athar",
+            storageBucket: "inventory-store-athar.firebasestorage.app",
+            messagingSenderId: "718339267329",
+            appId: "1:718339267329:web:d9ab16074f4a7367ff9900",
+            measurementId: "G-FWPFRDB57R"
         };
-        closeAdminModal();
-        loadUserData();
-        showMainApp();
-        showNotification('👑 سپر ایڈمن لاگ ان کامیاب!');
-    } else {
-        showNotification('❌ غلط پاس ورڈ', 'error');
-    }
-}
 
-// ==================== لاگ ان / رجسٹر ====================
-function selectRole(role) {
-    selectedRole = role;
-    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
-    document.getElementById('role' + role.charAt(0).toUpperCase() + role.slice(1).replace('_', '')).classList.add('selected');
-    
-    // اگر منیجر یا سیلزمین ہے تو رجسٹر لنک ہائڈ کریں
-    const regLink = document.getElementById('ownerRegisterLink');
-    if (role === 'manager' || role === 'salesman') {
-        regLink.style.display = 'none';
-    } else {
-        regLink.style.display = 'block';
-    }
-}
-
-function showOwnerRegister() {
-    document.getElementById('ownerRegisterModal').style.display = 'flex';
-}
-
-function closeOwnerRegister() {
-    document.getElementById('ownerRegisterModal').style.display = 'none';
-    document.getElementById('ownerRegName').value = '';
-    document.getElementById('ownerRegUsername').value = '';
-    document.getElementById('ownerRegPassword').value = '';
-    document.getElementById('ownerRegConfirm').value = '';
-}
-
-function registerOwner() {
-    const name = document.getElementById('ownerRegName').value.trim();
-    const username = document.getElementById('ownerRegUsername').value.trim();
-    const password = document.getElementById('ownerRegPassword').value;
-    const confirm = document.getElementById('ownerRegConfirm').value;
-
-    if (!name || !username || !password) {
-        showNotification('❌ تمام فیلڈز ضروری ہیں', 'error');
-        return;
-    }
-    if (password !== confirm) {
-        showNotification('❌ پاس ورڈ میچ نہیں ہو رہا', 'error');
-        return;
-    }
-    if (password.length < 4) {
-        showNotification('❌ پاس ورڈ کم از کم 4 حروف کا ہونا چاہیے', 'error');
-        return;
-    }
-
-    const allUsers = getAllUsers();
-    if (allUsers.find(u => u.username === username)) {
-        showNotification('❌ یہ صارف نام پہلے سے موجود ہے', 'error');
-        return;
-    }
-
-    const newOwner = {
-        id: 'owner_' + Date.now(),
-        name: name,
-        username: username,
-        password: password,
-        role: 'account_owner',
-        createdAt: new Date().toISOString()
-    };
-
-    allUsers.push(newOwner);
-    saveAllUsers(allUsers);
-
-    showNotification('✅ اکاؤنٹ کامیابی سے بنا! اب لاگ ان کریں');
-    document.getElementById('loginUsername').value = username;
-    document.getElementById('loginPassword').value = password;
-    closeOwnerRegister();
-}
-
-function login() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!username || !password) {
-        showNotification('❌ صارف نام اور پاس ورڈ ضروری ہیں', 'error');
-        return;
-    }
-
-    const allUsers = getAllUsers();
-    const user = allUsers.find(u => u.username === username && u.password === password);
-
-    if (user) {
-        currentUser = user;
-        loadUserData();
-        showMainApp();
-        showNotification('✅ خوش آمدید ' + user.name + '!');
-    } else {
-        showNotification('❌ غلط صارف نام یا پاس ورڈ', 'error');
-    }
-}
-
-function logout() {
-    currentUser = null;
-    stopScanner();
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('mainApp').classList.add('hidden');
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
-    showNotification('👋 لاگ آؤٹ ہو گیا');
-}
-
-// ==================== یوزر مینجمنٹ ====================
-function getAllUsers() {
-    return JSON.parse(localStorage.getItem('inventory_all_users') || '[]');
-}
-
-function saveAllUsers(users) {
-    localStorage.setItem('inventory_all_users', JSON.stringify(users));
-}
-
-// ==================== ڈیٹا مینجمنٹ ====================
-function loadUserData() {
-    if (!currentUser) return;
-    
-    if (currentUser.id === 'superadmin') {
-        // سپر ایڈمن تمام اونرز کا ڈیٹا اکٹھا کرے گا
-        products = []; sales = []; activities = [];
-        const allUsers = getAllUsers();
-        allUsers.forEach(u => {
-            if (u.role === 'account_owner' || u.id.startsWith('owner_')) {
-                const pfx = u.id + '_';
-                const uProds = JSON.parse(localStorage.getItem(pfx + 'products') || '[]');
-                const uSales = JSON.parse(localStorage.getItem(pfx + 'sales') || '[]');
-                const uActs = JSON.parse(localStorage.getItem(pfx + 'activities') || '[]');
-                
-                products = products.concat(uProds);
-                sales = sales.concat(uSales);
-                activities = activities.concat(uActs);
-            }
-        });
-        activities.sort((a,b) => b.id - a.id);
-    } else if (currentUser.role === 'manager' || currentUser.role === 'salesman') {
-        // اسٹاف کو اس کے متعلقہ اونر کا ڈیٹا شو ہوگا
-        const prefix = currentUser.ownerId + '_';
-        products = JSON.parse(localStorage.getItem(prefix + 'products') || '[]');
-        sales = JSON.parse(localStorage.getItem(prefix + 'sales') || '[]');
-        activities = JSON.parse(localStorage.getItem(prefix + 'activities') || '[]');
-    } else {
-        // اکاؤنٹ اونر کا اپنا ڈیٹا
-        const prefix = currentUser.id + '_';
-        products = JSON.parse(localStorage.getItem(prefix + 'products') || '[]');
-        sales = JSON.parse(localStorage.getItem(prefix + 'sales') || '[]');
-        activities = JSON.parse(localStorage.getItem(prefix + 'activities') || '[]');
-    }
-}
-
-function saveUserData() {
-    if (!currentUser || currentUser.id === 'superadmin') return; 
-    // ڈیٹا ہمیشہ اکاؤنٹ اونر کے کی-اسپیس (Key-space) میں سیو ہوگا
-    const targetId = (currentUser.role === 'manager' || currentUser.role === 'salesman') ? currentUser.ownerId : currentUser.id;
-    const prefix = targetId + '_';
-    localStorage.setItem(prefix + 'products', JSON.stringify(products));
-    localStorage.setItem(prefix + 'sales', JSON.stringify(sales));
-    localStorage.setItem(prefix + 'activities', JSON.stringify(activities));
-    syncToGoogleSheets();
-}
-
-function addActivity(action, details) {
-    activities.unshift({
-        id: Date.now(),
-        action: action,
-        details: details,
-        user: currentUser.name,
-        role: currentUser.role,
-        time: new Date().toLocaleString('ur-PK')
-    });
-    if (activities.length > 50) activities.pop();
-    saveUserData();
-    updateDashboard();
-}
-
-// ==================== مین ایپ ====================
-function showMainApp() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('mainApp').classList.remove('hidden');
-    
-    document.getElementById('userName').textContent = currentUser.name;
-    document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
-    
-    const roleBadge = document.getElementById('userRole');
-    const roleNames = {
-        'owner': 'سپر ایڈمن',
-        'account_owner': 'اکاؤنٹ اونر',
-        'manager': 'منیجر',
-        'salesman': 'سیلزمین'
-    };
-    roleBadge.textContent = roleNames[currentUser.role] || currentUser.role;
-    roleBadge.className = 'role-badge role-' + currentUser.role.replace('_', '-');
-
-    const isOwner = currentUser.role === 'owner' || currentUser.role === 'account_owner';
-    
-    if (isOwner) {
-        document.querySelectorAll('.owner-tab').forEach(el => el.classList.remove('hidden'));
-        document.querySelectorAll('.owner-only-stat').forEach(el => el.classList.remove('hidden'));
-        document.getElementById('ownerPrices').classList.remove('hidden');
-        document.getElementById('staffPrices').classList.add('hidden');
-        document.querySelectorAll('.owner-edit-price').forEach(el => el.classList.remove('hidden'));
-    } else {
-        document.querySelectorAll('.owner-tab').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('.owner-only-stat').forEach(el => el.classList.add('hidden'));
-        document.getElementById('ownerPrices').classList.add('hidden');
-        document.getElementById('staffPrices').classList.remove('hidden');
-        document.querySelectorAll('.owner-edit-price').forEach(el => el.classList.add('hidden'));
-    }
-
-    // اگر سپر ایڈمن ہے تو اسٹاف اور سیٹنگز ٹیب چھپائیں کیونکہ یہ گلوبل ویو ہے
-    if (currentUser.id === 'superadmin') {
-        document.querySelectorAll('.owner-tab').forEach(el => el.classList.add('hidden'));
-    }
-
-    updateDashboard();
-    renderProducts();
-    renderSales();
-    renderStaff();
-}
-
-// ==================== ٹیبز ====================
-function showTab(tabName) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    
-    event.target.classList.add('active');
-    document.getElementById('tab-' + tabName).classList.add('active');
-    
-    if (tabName === 'products') renderProducts();
-    if (tabName === 'sales') renderSales();
-    if (tabName === 'staff') renderStaff();
-    if (tabName === 'dashboard') updateDashboard();
-}
-
-// ==================== ڈیش بورڈ ====================
-function updateDashboard() {
-    document.getElementById('dashTotalProducts').textContent = products.length;
-    document.getElementById('dashTotalItems').textContent = products.reduce((s, p) => s + (parseInt(p.quantity) || 0), 0);
-    
-    const cats = [...new Set(products.map(p => p.category))];
-    document.getElementById('dashCategories').textContent = cats.length;
-    
-    const today = new Date().toDateString();
-    const todaySales = sales.filter(s => new Date(s.date).toDateString() === today);
-    document.getElementById('dashSales').textContent = todaySales.length;
-
-    if (currentUser.role === 'owner' || currentUser.role === 'account_owner') {
-        let profit = 0;
-        todaySales.forEach(sale => {
-            const prod = products.find(p => p.id === sale.productId);
-            if (prod && prod.costPrice) {
-                profit += (sale.unitPrice - prod.costPrice) * sale.quantity;
-            }
-        });
-        document.getElementById('dashProfit').textContent = '₹' + profit.toFixed(2);
-    }
-
-    const container = document.getElementById('recentActivity');
-    if (activities.length === 0) {
-        container.innerHTML = '<div class="empty-state">کوئی سرگرمی نہیں</div>';
-        return;
-    }
-    
-    let html = '<div style="max-height: 350px; overflow-y: auto;">';
-    activities.slice(0, 15).forEach(a => {
-        const colors = {
-            'owner': '#e94560', 'account_owner': '#9c27b0',
-            'manager': '#0f3460', 'salesman': '#17a2b8'
-        };
-        html += `
-            <div style="padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #333;">${a.action}</strong>
-                    <span style="font-size: 11px; color: #999;">${a.time}</span>
-                </div>
-                <div style="color: #666; margin-top: 4px;">${a.details}</div>
-                <div style="margin-top: 4px;">
-                    <span style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: ${colors[a.role] || '#666'}; color: white;">
-                        ${a.user}
-                    </span>
-                </div>
-            </div>
-        `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-// ==================== کیمرا اسکینر ====================
-function startScanner() {
-    if (scanner) return;
-    
-    const status = document.getElementById('cameraStatus');
-    status.className = 'camera-status status-info';
-    status.textContent = '⏳ کیمرہ شروع ہو رہا ہے...';
-    
-    scanner = new Html5Qrcode("reader");
-    
-    scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => { handleScan(decodedText); },
-        (error) => {}
-    ).then(() => {
-        status.className = 'camera-status status-success';
-        status.textContent = '✅ کیمرہ کام کر رہا ہے - اب اسکین کریں!';
-    }).catch(err => {
-        status.className = 'camera-status status-error';
-        status.textContent = '❌ کیمرہ ناکام: ' + err.message;
-        scanner = null;
-    });
-}
-
-function stopScanner() {
-    if (scanner) {
-        scanner.stop().then(() => {
-            scanner = null;
-            const status = document.getElementById('cameraStatus');
-            status.className = 'camera-status status-info';
-            status.textContent = '🔘 کیمرہ بند ہو گیا';
-        }).catch(() => { scanner = null; });
-    }
-}
-
-// ==================== پراڈکٹس ====================
-function handleScan(barcode) {
-    const existing = products.find(p => p.barcode === barcode);
-    
-    if (existing) {
-        existing.quantity = (parseInt(existing.quantity) || 0) + 1;
-        existing.updatedAt = new Date().toISOString();
-        showNotification(`"${existing.name}" کی مقدار: ${existing.quantity}`);
-        addActivity('اسکین اپڈیٹ', `${existing.name} - نئی مقدار: ${existing.quantity}`);
-    } else {
-        document.getElementById('manualBarcode').value = barcode;
-        document.getElementById('manualName').value = 'پراڈکٹ - ' + barcode.substring(0, 8);
-        showNotification('📦 نیا بارکوڈ ملا! تفصیلات درج کریں');
-        setTimeout(() => document.getElementById('manualName').focus(), 100);
-    }
-    
-    saveUserData();
-    renderProducts();
-    
-    stopScanner();
-    setTimeout(() => {
-        if (document.getElementById('tab-scan').classList.contains('active')) {
-            startScanner();
+        // فائر بیس شروع کرنا
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase Connection Active");
+        } catch (e) {
+            console.error("Firebase Connection Error: ", e);
         }
-    }, 3000);
-}
 
-function addProduct() {
-    const barcode = document.getElementById('manualBarcode').value.trim();
-    const name = document.getElementById('manualName').value.trim();
-    const category = document.getElementById('manualCategory').value;
-    const quantity = parseInt(document.getElementById('manualQuantity').value) || 1;
-    
-    if (!barcode || !name) {
-        showNotification('❌ بارکوڈ اور نام ضروری ہیں', 'error');
-        return;
-    }
+        // لوکل اسٹوریج ویری ایبلز
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        let isOwner = false;
+        let isSuperAdmin = false;
 
-    const isOwner = currentUser.role === 'owner' || currentUser.role === 'account_owner';
-    const costPrice = isOwner ? (parseFloat(document.getElementById('costPrice').value) || 0) : 0;
-    const salePrice = isOwner ? 
-        (parseFloat(document.getElementById('salePrice').value) || 0) : 
-        (parseFloat(document.getElementById('staffSalePrice').value) || 0);
+        window.onload = function() {
+            showProducts();
+            checkExistingOwner();
+            if(localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            // شیٹ آئی ڈی کی ریڈ لوڈنگ
+            const savedSheetId = localStorage.getItem('google_sheet_id');
+            if (savedSheetId) {
+                document.getElementById('sheetId').value = savedSheetId;
+            }
+        };
 
-    if (!salePrice || salePrice <= 0) {
-        showNotification('❌ فروخت قیمت درج کریں', 'error');
-        return;
-    }
-
-    const existing = products.find(p => p.barcode === barcode);
-    
-    if (existing) {
-        existing.quantity = (parseInt(existing.quantity) || 0) + quantity;
-        existing.salePrice = salePrice;
-        if (isOwner) existing.costPrice = costPrice;
-        existing.updatedAt = new Date().toISOString();
-        showNotification(`✅ "${existing.name}" اپڈیٹ ہو گیا - کل: ${existing.quantity}`);
-        addActivity('اسٹاک بڑھایا', `${name} - نئی مقدار: ${existing.quantity}`);
-    } else {
-        products.unshift({
-            id: 'prod_' + Date.now(),
-            barcode: barcode,
-            name: name,
-            category: category,
-            quantity: quantity,
-            costPrice: costPrice,
-            salePrice: salePrice,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        });
-        showNotification('✅ نیا پراڈکٹ شامل ہو گیا!');
-        addActivity('نیا پراڈکٹ', `${name} - ${quantity} عدد - ₹${salePrice}`);
-    }
-
-    saveUserData();
-    renderProducts();
-    
-    document.getElementById('manualBarcode').value = '';
-    document.getElementById('manualName').value = '';
-    document.getElementById('manualQuantity').value = '1';
-    document.getElementById('costPrice').value = '';
-    document.getElementById('salePrice').value = '';
-    document.getElementById('staffSalePrice').value = '';
-}
-
-function renderProducts() {
-    const container = document.getElementById('productsTable');
-    const searchTerm = (document.getElementById('searchProduct')?.value || '').toLowerCase();
-    
-    let filtered = products;
-    if (searchTerm) {
-        filtered = products.filter(p => 
-            p.name.toLowerCase().includes(searchTerm) || 
-            p.barcode.includes(searchTerm) ||
-            p.category.includes(searchTerm)
-        );
-    }
-
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state">📭 کوئی پراڈکٹ نہیں</div>';
-        updateDashboard();
-        return;
-    }
-
-    const isOwner = currentUser.role === 'owner' || currentUser.role === 'account_owner';
-
-    let html = `
-        <table>
-            <thead>
-                <tr>
-                    <th>بارکوڈ</th>
-                    <th>نام</th>
-                    <th>کیٹیگری</th>
-                    <th>مقدار</th>
-                    ${isOwner ? '<th>🛒 خرید</th>' : ''}
-                    <th>🏷️ فروخت</th>
-                    <th>عمل</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    const catColors = {
-        'گروسری': '#28a745', 'الیکٹرانکس': '#007bff', 'کپڑے': '#fd7e14',
-        'دوائیں': '#dc3545', 'کاسمیٹکس': '#e83e8c', 'دیگر': '#6c757d'
-    };
-
-    filtered.forEach(p => {
-        const stockClass = (p.quantity <= 5) ? 'stock-low' : 'stock-ok';
-        html += `
-            <tr>
-                <td><code style="font-size: 12px;">${p.barcode}</code></td>
-                <td style="font-weight: 600;">${p.name}</td>
-                <td><span class="category-badge" style="background: ${catColors[p.category] || '#6c757d'}">${p.category}</span></td>
-                <td class="${stockClass}">${p.quantity}</td>
-                ${isOwner ? `<td style="color: #e94560; font-weight: bold;">₹${(p.costPrice || 0).toFixed(2)}</td>` : ''}
-                <td style="color: #28a745; font-weight: bold;">₹${(p.salePrice || 0).toFixed(2)}</td>
-                <td class="actions">
-                    <button class="btn btn-primary btn-small" onclick="editProduct('${p.id}')">✏️</button>
-                    <button class="btn btn-danger btn-small" onclick="deleteProduct('${p.id}')">🗑️</button>
-                </td>
-            </tr>
-        `;
-    });
-
-    html += '</tbody></table>';
-    container.innerHTML = html;
-    updateDashboard();
-}
-
-function editProduct(id) {
-    const p = products.find(x => x.id === id);
-    if (!p) return;
-
-    editingId = id;
-    document.getElementById('editName').value = p.name;
-    document.getElementById('editBarcode').value = p.barcode;
-    document.getElementById('editCategory').value = p.category;
-    document.getElementById('editQuantity').value = p.quantity;
-    document.getElementById('editCostPrice').value = p.costPrice || '';
-    document.getElementById('editSalePrice').value = p.salePrice || '';
-    
-    document.getElementById('editModal').style.display = 'flex';
-}
-
-function saveEdit() {
-    const p = products.find(x => x.id === editingId);
-    if (!p) return;
-
-    p.name = document.getElementById('editName').value;
-    p.barcode = document.getElementById('editBarcode').value;
-    p.category = document.getElementById('editCategory').value;
-    p.quantity = parseInt(document.getElementById('editQuantity').value) || 0;
-    p.salePrice = parseFloat(document.getElementById('editSalePrice').value) || 0;
-    
-    if (currentUser.role === 'owner' || currentUser.role === 'account_owner') {
-        p.costPrice = parseFloat(document.getElementById('editCostPrice').value) || 0;
-    }
-    
-    p.updatedAt = new Date().toISOString();
-    
-    saveUserData();
-    renderProducts();
-    closeModal();
-    showNotification('💾 تبدیلیاں محفوظ ہو گئیں');
-    addActivity('پراڈکٹ ترمیم', p.name);
-}
-
-function deleteProduct(id) {
-    if (!confirm('🗑️ حذف کریں؟')) return;
-    const p = products.find(x => x.id === id);
-    products = products.filter(x => x.id !== id);
-    saveUserData();
-    renderProducts();
-    showNotification('🗑️ حذف ہو گیا');
-    if (p) addActivity('پراڈکٹ حذف', p.name);
-}
-
-function closeModal() {
-    document.getElementById('editModal').style.display = 'none';
-    editingId = null;
-}
-
-// ==================== سیلز ====================
-function findProductForSale() {
-    const barcode = document.getElementById('saleBarcode').value.trim();
-    const p = products.find(x => x.barcode === barcode);
-    
-    if (p) {
-        document.getElementById('saleProductName').value = p.name;
-        document.getElementById('saleUnitPrice').value = p.salePrice || 0;
-        calculateSaleTotal();
-    } else {
-        showNotification('❌ پراڈکٹ نہیں ملا', 'error');
-    }
-}
-
-function calculateSaleTotal() {
-    const qty = parseInt(document.getElementById('saleQuantity').value) || 1;
-    const price = parseFloat(document.getElementById('saleUnitPrice').value) || 0;
-    document.getElementById('saleTotal').textContent = '₹' + (qty * price).toFixed(2);
-}
-
-function makeSale() {
-    const barcode = document.getElementById('saleBarcode').value.trim();
-    const qty = parseInt(document.getElementById('saleQuantity').value) || 1;
-    const p = products.find(x => x.barcode === barcode);
-    
-    if (!p) {
-        showNotification('❌ پراڈکٹ نہیں ملا', 'error');
-        return;
-    }
-    
-    if (p.quantity < qty) {
-        showNotification('❌ اتنی مقدار دستیاب نہیں (دستیاب: ' + p.quantity + ')', 'error');
-        return;
-    }
-
-    p.quantity -= qty;
-    const total = qty * (p.salePrice || 0);
-    
-    sales.unshift({
-        id: 'sale_' + Date.now(),
-        productId: p.id,
-        productName: p.name,
-        barcode: barcode,
-        quantity: qty,
-        unitPrice: p.salePrice || 0,
-        total: total,
-        seller: currentUser.name,
-        sellerRole: currentUser.role,
-        date: new Date().toISOString()
-    });
-    
-    saveUserData();
-    renderProducts();
-    renderSales();
-    
-    document.getElementById('saleBarcode').value = '';
-    document.getElementById('saleProductName').value = '';
-    document.getElementById('saleQuantity').value = '1';
-    document.getElementById('saleUnitPrice').value = '';
-    document.getElementById('saleTotal').textContent = '₹0.00';
-    
-    showNotification(`💰 سیل مکمل! رقم: ₹${total.toFixed(2)}`);
-    addActivity('سیل', `${p.name} - ${qty} عدد - ₹${total.toFixed(2)}`);
-}
-
-function renderSales() {
-    const container = document.getElementById('salesHistory');
-    
-    if (sales.length === 0) {
-        container.innerHTML = '<div class="empty-state">کوئی سیل ریکارڈ نہیں</div>';
-        return;
-    }
-
-    let html = `
-        <table>
-            <thead>
-                <tr>
-                    <th>تاریخ</th>
-                    <th>پراڈکٹ</th>
-                    <th>مقدار</th>
-                    <th>رقم</th>
-                    <th>فروخت کنندہ</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    sales.slice(0, 50).forEach(s => {
-        html += `
-            <tr>
-                <td style="font-size: 12px;">${new Date(s.date).toLocaleString('ur-PK')}</td>
-                <td style="font-weight: 600;">${s.productName}</td>
-                <td>${s.quantity}</td>
-                <td style="color: #28a745; font-weight: bold;">₹${s.total?.toFixed(2) || 0}</td>
-                <td><span class="category-badge" style="background: #17a2b8;">${s.seller}</span></td>
-            </tr>
-        `;
-    });
-
-    html += '</tbody></table>';
-    container.innerHTML = html;
-}
-
-// ==================== اسٹاف ====================
-function addStaff() {
-    if (currentUser.role !== 'owner' && currentUser.role !== 'account_owner') {
-        showNotification('❌ صرف اونر اسٹاف بنا سکتا ہے', 'error');
-        return;
-    }
-
-    const name = document.getElementById('staffName').value.trim();
-    const username = document.getElementById('staffUsername').value.trim();
-    const password = document.getElementById('staffPassword').value;
-    const role = document.getElementById('staffRole').value;
-
-    if (!name || !username || !password) {
-        showNotification('❌ تمام فیلڈز ضروری ہیں', 'error');
-        return;
-    }
-
-    const allUsers = getAllUsers();
-    if (allUsers.find(u => u.username === username)) {
-        showNotification('❌ یہ صارف نام پہلے سے موجود ہے', 'error');
-        return;
-    }
-
-    const newStaff = {
-        id: 'staff_' + Date.now(),
-        name: name,
-        username: username,
-        password: password,
-        role: role,
-        ownerId: currentUser.id,
-        createdAt: new Date().toISOString()
-    };
-
-    allUsers.push(newStaff);
-    saveAllUsers(allUsers);
-    
-    document.getElementById('staffName').value = '';
-    document.getElementById('staffUsername').value = '';
-    document.getElementById('staffPassword').value = '';
-    
-    renderStaff();
-    showNotification('✅ اسٹاف شامل ہو گیا! اب وہ لاگ ان کر سکتے ہیں');
-    addActivity('نیا اسٹاف', `${name} - ${role === 'manager' ? 'منیجر' : 'سیلزمین'}`);
-}
-
-function renderStaff() {
-    const container = document.getElementById('staffList');
-    const allUsers = getAllUsers();
-    const myStaff = allUsers.filter(u => 
-        u.ownerId === currentUser.id && 
-        (u.role === 'manager' || u.role === 'salesman')
-    );
-    
-    if (myStaff.length === 0) {
-        container.innerHTML = '<div class="empty-state">👥 ابھی تک کوئی اسٹاف نہیں</div>';
-        return;
-    }
-
-    let html = '';
-    myStaff.forEach(s => {
-        html += `
-            <div class="staff-card">
-                <div>
-                    <div style="font-weight: bold; font-size: 16px;">${s.name}</div>
-                    <div style="color: #666; font-size: 13px; margin-top: 4px;">
-                        @${s.username} | ${s.role === 'manager' ? '👔 منیجر' : '🛒 سیلزمین'}
-                    </div>
-                </div>
-                <button class="btn btn-danger btn-small" onclick="deleteStaff('${s.id}')">🗑️ حذف</button>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-function deleteStaff(id) {
-    if (!confirm('🗑️ اس اسٹاف کو حذف کریں؟')) return;
-    
-    let allUsers = getAllUsers();
-    allUsers = allUsers.filter(u => u.id !== id);
-    saveAllUsers(allUsers);
-    
-    renderStaff();
-    showNotification('🗑️ اسٹاف حذف ہو گیا');
-}
-
-// ==================== ایکسپورٹ ====================
-function exportData(format) {
-    if (products.length === 0) {
-        showNotification('❌ ایکسپورٹ کے لیے کوئی ڈیٹا نہیں', 'error');
-        return;
-    }
-
-    const isOwner = currentUser.role === 'owner' || currentUser.role === 'account_owner';
-    const timestamp = new Date().toISOString().slice(0, 10);
-
-    if (format === 'json') {
-        const data = isOwner ? products : products.map(p => ({
-            barcode: p.barcode, name: p.name, category: p.category,
-            quantity: p.quantity, salePrice: p.salePrice
-        }));
-        
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `products_${timestamp}.json`; a.click();
-        showNotification('📥 JSON ڈاؤنلوڈ ہو گیا');
-    } else {
-        let csv = isOwner ? 
-            'بارکوڈ,نام,کیٹیگری,مقدار,خرید قیمت,فروخت قیمت,تاریخ\n' :
-            'بارکوڈ,نام,کیٹیگری,مقدار,فروخت قیمت,تاریخ\n';
-            
-        products.forEach(p => {
-            if (isOwner) {
-                csv += `${p.barcode},"${p.name}",${p.category},${p.quantity},${p.costPrice || 0},${p.salePrice || 0},"${new Date(p.createdAt).toLocaleString('ur-PK')}"\n`;
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            if(document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
             } else {
-                csv += `${p.barcode},"${p.name}",${p.category},${p.quantity},${p.salePrice || 0},"${new Date(p.createdAt).toLocaleString('ur-PK')}"\n`;
+                localStorage.setItem('theme', 'light');
             }
-        });
-        
-        const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8;'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `products_${timestamp}.csv`; a.click();
-        showNotification('📄 CSV ڈاؤنلوڈ ہو گیا');
-    }
-}
-
-// ==================== گوگل شیٹس ====================
-function syncToGoogleSheets() {
-    const status = document.getElementById('syncStatus');
-    if (status) {
-        status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
-        status.className = 'sync-status syncing';
-    }
-    
-    let products = [];
-    try {
-        products = JSON.parse(localStorage.getItem("products")) || [];
-    } catch(e) {
-        console.error("لوکل اسٹوریج ریڈ کرنے میں مسئلہ:", e);
-    }
-
-    if (products.length === 0) {
-        if (status) {
-            status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
-            status.className = 'sync-status';
         }
-        showNotification('اسٹاک میں کوئی پروڈکٹ نہیں ہے جسے سنک کیا جا سکے!');
-        return;
-    }
 
-    if (typeof db === 'undefined') {
-        if (status) {
-            status.textContent = '❌ فائر بیس کنکشن غائب';
-            status.className = 'sync-status';
+        function showNotification(message, type = 'success') {
+            const notif = document.getElementById('notification');
+            notif.querySelector('span').textContent = message;
+            notif.style.backgroundColor = type === 'error' ? '#e74c3c' : '#2c3e50';
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 3000);
         }
-        showNotification('فائر بیس ڈیٹا بیس لوڈ نہیں ہو سکا!');
-        return;
-    }
 
-    let syncCount = 0;
-    
-    products.forEach((product) => {
-        db.collection("inventory").add({
-            productName: product.name || product.productName || 'No Name',
-            productPurchasePrice: product.pPrice || product.productPurchasePrice || 0,
-            productSalePrice: product.sPrice || product.productSalePrice || 0,
-            productStock: product.stock || product.productStock || 0,
-            productCategory: product.category || product.productCategory || 'General',
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
-        .then(() => {
-            syncCount++;
-            if (syncCount === products.length) {
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function addProduct() {
+            const name = document.getElementById('prodName').value.trim();
+            const pPrice = parseFloat(document.getElementById('prodPPrice').value) || 0;
+            const sPrice = parseFloat(document.getElementById('prodSPrice').value) || 0;
+            const stock = parseInt(document.getElementById('prodStock').value) || 0;
+            const category = document.getElementById('prodCategory').value;
+
+            const newProduct = {
+                id: Date.now().toString(),
+                name,
+                pPrice,
+                sPrice,
+                stock,
+                category
+            };
+
+            products.push(newProduct);
+            localStorage.setItem("products", JSON.stringify(products));
+            
+            showProducts();
+            document.getElementById('productForm').reset();
+            showNotification("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
+        }
+
+        function showProducts(filteredProducts = null) {
+            const list = filteredProducts || products;
+            const tbody = document.getElementById('productTableBody');
+            tbody.innerHTML = '';
+
+            let totalVal = 0;
+            let totalCats = new Set();
+
+            if(list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">کوئی پروڈکٹ موجود نہیں ہے</td></tr>`;
+            } else {
+                list.forEach(p => {
+                    totalVal += (p.stock * p.pPrice);
+                    totalCats.add(p.category);
+
+                    const statusBadge = p.stock > 5 ? 
+                        `<span class="badge badge-success">دستیاب</span>` : 
+                        `<span class="badge badge-danger">کم اسٹاک</span>`;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${p.name}</strong></td>
+                            <td>${p.category}</td>
+                            <td>${p.pPrice} روپے</td>
+                            <td>${p.sPrice} روپے</td>
+                            <td>${p.stock}</td>
+                            <td>${statusBadge}</td>
+                            <td><button class="btn btn-danger" onclick="deleteProduct('${p.id}')" style="padding: 0.25rem 0.5rem; font-size:0.8rem;">🗑️ حذف</button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('statProducts').textContent = list.length;
+            document.getElementById('statCategories').textContent = totalCats.size;
+            document.getElementById('statValue').textContent = totalVal.toLocaleString() + " روپے";
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchBar').value.toLowerCase().trim();
+            if(!query) {
+                showProducts();
+                return;
+            }
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            showProducts(filtered);
+        }
+
+        function deleteProduct(id) {
+            if(!isOwner && !isSuperAdmin) {
+                showNotification("❌ معذرت! پروڈکٹ حذف کرنے کے لیے ڈائریکٹر یا سپر ایڈمن لاگ ان ہونا ضروری ہے!", "error");
+                openModal('ownerModal');
+                return;
+            }
+            if(confirm("کیا آپ واقعی یہ پروڈکٹ ریکارڈ سے ختم کرنا چاہتے ہیں؟")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem("products", JSON.stringify(products));
+                showProducts();
+                showNotification("پروڈکٹ کامیابی سے حذف کر دی گئی");
+            }
+        }
+
+        // ================= ٹھیک کی گئی کلاؤڈ سنک لاجک (Firebase Sync Fixes) =================
+        function syncToGoogleSheets() {
+            const status = document.getElementById('syncStatus');
+            if (status) {
+                status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
+                status.className = 'sync-status syncing';
+            }
+
+            if (products.length === 0) {
                 if (status) {
-                    status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
+                    status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
                     status.className = 'sync-status';
                 }
-                showNotification('🔄 تمام اسٹاک مستقل طور پر کلاؤڈ میں محفوظ ہو گیا ہے!');
+                showNotification('اسٹاک میں کوئی پروڈکٹ نہیں ہے جسے سنک کیا جا سکے!', 'error');
+                return;
             }
-        })
-        .catch((error) => {
-            console.error("فائر بیس سنک میں خرابی: ", error);
-            if (status) {
-                status.textContent = '❌ سنک فیل ہو گیا';
-                status.className = 'sync-status';
+
+            if (!db) {
+                if (status) {
+                    status.textContent = '❌ کلاؤڈ کنکشن غائب';
+                    status.className = 'sync-status';
+                }
+                showNotification('فائر بیس ڈیٹا بیس لوڈ نہیں ہو سکا!', 'error');
+                return;
             }
-        });
-    });
-}
-}
 
-function clearAllData() {
-    if (!confirm('⚠️ تمام ڈیٹا حذف کریں؟ یہ واپس نہیں آئے گا!')) return;
-    
-    const targetId = (currentUser.role === 'manager' || currentUser.role === 'salesman') ? currentUser.ownerId : currentUser.id;
-    const prefix = targetId + '_';
-    localStorage.removeItem(prefix + 'products');
-    localStorage.removeItem(prefix + 'sales');
-    localStorage.removeItem(prefix + 'activities');
-    
-    products = []; sales = []; activities = [];
-    saveUserData();
-    renderProducts();
-    renderSales();
-    updateDashboard();
-    showNotification('🗑️ تمام ڈیٹا حذف ہو گیا');
-}
+            let syncCount = 0;
+            let hasError = false;
+            
+            products.forEach((product) => {
+                db.collection("inventory").add({
+                    productName: product.name || 'No Name',
+                    productPurchasePrice: product.pPrice || 0,
+                    productSalePrice: product.sPrice || 0,
+                    productStock: product.stock || 0,
+                    productCategory: product.category || 'General',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    syncCount++;
+                    if (syncCount === products.length && !hasError) {
+                        if (status) {
+                            status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
+                            status.className = 'sync-status';
+                        }
+                        showNotification('🔄 تمام اسٹاک مستقل طور پر فائر بیس کلاؤڈ میں محفوظ ہو گیا ہے!');
+                    }
+                })
+                .catch((error) => {
+                    console.error("فائر بیس سنک میں خرابی: ", error);
+                    hasError = true;
+                    if (status) {
+                        status.textContent = '❌ سنک فیل ہو گیا';
+                        status.className = 'sync-status';
+                    }
+                });
+            });
+        }
 
-// ==================== یوٹیلیٹیز ====================
-function showNotification(message, type = 'success') {
-    const notif = document.getElementById('notification');
-    notif.textContent = message;
-    notif.style.background = type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#28a745';
-    notif.style.color = type === 'warning' ? '#333' : 'white';
-    notif.style.display = 'block';
-    
-    setTimeout(() => {
-        notif.style.display = 'none';
-    }, 3000);
-}
+        function saveSheetSettings() {
+            const sheetId = document.getElementById('sheetId').value.trim();
+            if (sheetId) {
+                localStorage.setItem('google_sheet_id', sheetId);
+                showNotification('💾 کلاؤڈ سیٹنگز آئی ڈی محفوظ ہو گئی');
+            }
+        }
 
-// انٹر کی ایونٹس
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('manualBarcode')?.addEventListener('keypress', e => {
-        if (e.key === 'Enter') document.getElementById('manualName').focus();
-    });
-    document.getElementById('manualName')?.addEventListener('keypress', e => {
-        if (e.key === 'Enter') addProduct();
-    });
-    document.getElementById('saleBarcode')?.addEventListener('keypress', e => {
-        if (e.key === 'Enter') findProductForSale();
-    });
-});
+        function syncNow() {
+            syncToGoogleSheets();
+        }
 
-// مودال بند
-document.getElementById('editModal')?.addEventListener('click', e => {
-    if (e.target.id === 'editModal') closeModal();
-});
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyC4MeuXCdF2a3JgZDQtkYYT5NztquYJXmo",
-    authDomain: "inventory-store-athar.firebaseapp.com",
-    projectId: "inventory-store-athar",
-    storageBucket: "inventory-store-athar.firebasestorage.app",
-    messagingSenderId: "718339267329",
-    appId: "1:718339267329:web:d9ab16074f4a7367ff9900",
-    measurementId: "G-FWPFRDB57R"
-  };
+        // اتھارٹی چیکس پینل
+        function checkExistingOwner() {
+            const localOwner = localStorage.getItem('owner_account');
+            if (!localOwner) {
+                document.getElementById('regLink').style.display = 'block';
+            }
+        }
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-    
+        function verifyOwner() {
+            const pass = document.getElementById('ownerPass').value;
+            const savedOwner = JSON.parse(localStorage.getItem('owner_account'));
+
+            if (savedOwner && pass === savedOwner.password) {
+                isOwner = true;
+                showNotification("🔓 ڈائریکٹر اتھارٹی تصدیق شدہ!");
+                closeModal('ownerModal');
+            } else if (!savedOwner && pass === "1234") {
+                isOwner = true;
+                showNotification("🔓 ڈائریکٹر لاگ ان کامیاب (بیک اپ کوڈ)!");
+                closeModal('ownerModal');
+            } else {
+                showNotification("❌ غلط پاس ورڈ درج کیا گیا ہے!", "error");
+            }
+        }
+
+        function verifySuperAdmin() {
+            const pass = document.getElementById('superAdminPass').value;
+            if(pass === "admin786" || pass === "supermaster") {
+                isSuperAdmin = true;
+                showNotification("👑 سپر ایڈمن موڈ فعال ہو گیا ہے!");
+                closeModal('superAdminModal');
+            } else {
+                showNotification("❌ ماسٹر پاس ورڈ غلط ہے!", "error");
+            }
+        }
+
+        function showOwnerRegister() {
+            closeModal('ownerModal');
+            openModal('ownerRegisterModal');
+        }
+
+        function registerOwner() {
+            const name = document.getElementById('ownerRegName').value.trim();
+            const username = document.getElementById('ownerRegUsername').value.trim();
+            const password = document.getElementById('ownerRegPassword').value;
+            const confirm = document.getElementById('ownerRegConfirm').value;
+
+            if (!name || !username || !password) {
+                showNotification("❌ تمام فیلڈز فل کرنا ضروری ہیں", 'error');
+                return;
+            }
+            if (password !== confirm) {
+                showNotification("❌ پاس ورڈ میچ نہیں ہوا", 'error');
+                return;
+            }
+
+            const ownerObj = { name, username, password };
+            localStorage.setItem('owner_account', JSON.stringify(ownerObj));
+            showNotification("💾 نیا ڈائریکٹر رجسٹر ہو چکا ہے!");
+            closeModal('ownerRegisterModal');
+            openModal('ownerModal');
+        }
+    </script>
 </body>
 </html>
