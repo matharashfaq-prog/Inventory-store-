@@ -1333,26 +1333,48 @@ function exportData(format) {
 // ==================== گوگل شیٹس ====================
 function syncToGoogleSheets() {
     const status = document.getElementById('syncStatus');
-    status.textContent = '🔄 ہم آہنگ ہو رہا ہے...';
+    status.textContent = '🔄 کلاؤڈ کے ساتھ ہم آہنگ ہو رہا ہے...';
     status.className = 'sync-status syncing';
     
-    setTimeout(() => {
-        status.textContent = '✅ ہم آہنگ';
+    // لوکل اسٹوریج سے پروڈکٹس کا ڈیٹا نکالیں
+    const products = JSON.parse(localStorage.getItem("products")) || [];
+
+    if (products.length === 0) {
+        status.textContent = '❌ کوئی ڈیٹا موجود نہیں';
         status.className = 'sync-status';
-    }, 1000);
-}
-
-function saveSheetSettings() {
-    const sheetId = document.getElementById('sheetId').value.trim();
-    if (sheetId) {
-        localStorage.setItem('google_sheet_id', sheetId);
-        showNotification('💾 گوگل شیٹ سیٹنگز محفوظ ہو گئیں');
+        showNotification('اسٹاک میں کوئی پروڈکٹ نہیں ہے جسے سنک کیا جا سکے!');
+        return;
     }
+
+    // فائر بیس کلاؤڈ پر ڈیٹا بھیجنے کا عمل
+    // ہم باری باری تمام پروڈکٹس کو فائر بیس کے 'inventory' کلیکشن میں محفوظ کریں گے
+    let syncCount = 0;
+    
+    products.forEach((product) => {
+        db.collection("inventory").add({
+            productName: product.name || '',
+            productPurchasePrice: product.pPrice || 0,
+            productSalePrice: product.sPrice || 0,
+            productStock: product.stock || 0,
+            productCategory: product.category || 'General',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            syncCount++;
+            if (syncCount === products.length) {
+                status.textContent = '✅ کلاؤڈ سے ہم آہنگ';
+                status.className = 'sync-status';
+                showNotification('🔄 تمام اسٹاک مستقل طور پر کلاؤڈ میں محفوظ ہو گیا ہے!');
+            }
+        })
+        .catch((error) => {
+            console.error("فائر بیس سنک میں خرابی: ", error);
+            status.textContent = '❌ سنک فیل ہو گیا';
+            status.className = 'sync-status';
+        });
+    });
 }
 
-function syncNow() {
-    syncToGoogleSheets();
-    showNotification('🔄 ہم آہنگی مکمل');
 }
 
 function clearAllData() {
