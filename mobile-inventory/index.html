@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پراڈکٹ انوینٹری سسٹم</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <div style="font-size: 60px; margin-bottom: 10px;">📦</div>
+            <h1>انوینٹری سسٹم</h1>
+            <p style="color: #666; margin-bottom: 20px;">پروفیشنل کلاؤڈ انوینٹری لاگ ان</p>
+            
+            <div style="width: 100%; margin-bottom: 15px;">
+                <button type="button" onclick="loginWithGoogle()" style="background-color: white; color: #555; border: 1px solid #ccd0d5; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); gap: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 18px;">
+                    Google کے ساتھ لاگ ان کریں
+                </button>
+                
+                <div style="display: flex; align-items: center; text-align: center; margin: 15px 0; color: #999; font-size: 13px;">
+                    <div style="flex: 1; border-bottom: 1px solid #eee;"></div>
+                    <span style="padding: 0 10px; color: #666;">یا مینوئل لاگ ان کریں</span>
+                    <div style="flex: 1; border-bottom: 1px solid #eee;"></div>
+                </div>
+            </div>
+
+            <div id="loginForm">
+                <input type="text" class="login-input" id="loginUsername" placeholder="📧 صارف نام / ای میل">
+                <input type="password" class="login-input" id="loginPassword" placeholder="🔒 پاس ورڈ">
+                <button class="btn btn-primary" onclick="login()" style="margin-top: 10px;">🔓 لاگ ان</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="container hidden">
+        <div class="app-header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <img id="userAvatarImg" src="" alt="Avatar" style="display: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #28a745;">
+                <div>
+                    <div style="font-weight: bold; font-size: 16px;" id="userName">لوڈنگ...</div>
+                    <span class="role-badge" id="userRole">سیلزمین</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="sync-status" id="syncStatus">✅ ہم آہنگ</span>
+                <button class="btn btn-danger btn-small" onclick="logout()">🚪 لاگ آؤٹ</button>
+            </div>
+        </div>
+
+        <div class="tabs" id="mainTabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 ڈیش بورڈ</button>
+            <button class="tab" onclick="showTab('scan')">📷 اسکین</button>
+            <button class="tab" onclick="showTab('products')">📦 پراڈکٹس</button>
+            <button class="tab" onclick="showTab('sales')">💰 سیلز</button>
+            <button class="tab owner-tab hidden" onclick="showTab('staff')">👥 اسٹاف</button>
+            <button class="tab owner-tab hidden" onclick="showTab('settings')">⚙️ سیٹنگز</button>
+        </div>
+
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="number" id="dashTotalProducts">0</div>
+                    <div class="label">کل پراڈکٹس</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="dashTotalItems">0</div>
+                    <div class="label">کل آئٹمز</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="dashCategories">0</div>
+                    <div class="label">کیٹیگریز</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="dashSales">0</div>
+                    <div class="label">آج کی سیلز</div>
+                </div>
+                <div class="stat-box owner-only-stat hidden" id="dashProfitBox">
+                    <div class="number" id="dashProfit">₹0</div>
+                    <div class="label">آج کا منافع</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="section-title">📈 حالیہ سرگرمیاں</h3>
+                <div id="recentActivity">
+                    <div class="empty-state">کوئی سرگرمی نہیں</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-scan" class="tab-content">
+            <div class="card">
+                <div class="scanner-container">
+                    <h3 class="section-title">📷 کیمرے سے اسکین کریں</h3>
+                    <div id="cameraStatus" class="camera-status status-info">
+                        🔘 کیمرہ بند ہے - "کیمرہ آن کریں" پر کلک کریں
+                    </div>
+                    <div id="reader"></div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="startScanner()">📷 کیمرہ آن کریں</button>
+                        <button class="btn btn-danger" onclick="stopScanner()">⏹️ بند کریں</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="section-title">✍️ دستی اندراج</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>بارکوڈ نمبر *</label>
+                        <input type="text" id="manualBarcode" placeholder="بارکوڈ اسکین کریں یا لکھیں">
+                    </div>
+                    <div class="input-group">
+                        <label>پراڈکٹ کا نام *</label>
+                        <input type="text" id="manualName" placeholder="پراڈکٹ کا نام">
+                    </div>
+                    <div class="input-group">
+                        <label>کیٹیگری</label>
+                        <select id="manualCategory">
+                            <option value="گروسری">گروسری</option>
+                            <option value="الیکٹرانکس">الیکٹرانکس</option>
+                            <option value="کپڑے">کپڑے</option>
+                            <option value="دوائیں">دوائیں</option>
+                            <option value="کاسمیٹکس">کاسمیٹکس</option>
+                            <option value="دیگر">دیگر</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>مقدار (تعداد)</label>
+                        <input type="number" id="manualQuantity" value="1" min="1">
+                    </div>
+                </div>
+                <div id="ownerPrices" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #e94560;">💰 قیمتیں (صرف اونر کے لیے)</h4>
+                    <div class="price-inputs">
+                        <div class="price-box cost">
+                            <div class="price-label">🛒 خرید قیمت (Cost)</div>
+                            <input type="number" id="costPrice" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="price-box sale">
+                            <div class="price-label">🏷️ فروخت قیمت (Sale)</div>
+                            <input type="number" id="salePrice" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <div id="staffPrices" class="hidden" style="margin-top: 20px;">
+                    <div class="input-group">
+                        <label>🏷️ فروخت قیمت</label>
+                        <input type="number" id="staffSalePrice" placeholder="فروخت قیمت درج کریں" step="0.01">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addProduct()" style="width: 100%; margin-top: 25px; padding: 16px;">
+                    ➕ پراڈکٹ شامل کریں
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-products" class="tab-content">
+            <div class="card">
+                <h3 class="section-title">📦 پراڈکٹس کی فہرست</h3>
+                <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="searchProduct" placeholder="🔍 نام، بارکوڈ یا کیٹیگری سے تلاش..." style="flex: 1; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px;" onkeyup="renderProducts()">
+                    <button class="btn btn-primary" onclick="exportData('json')">📥 JSON</button>
+                    <button class="btn btn-warning" onclick="exportData('csv')">📄 CSV</button>
+                </div>
+                <div class="table-container" id="productsTable">
+                    <div class="empty-state">📭 کوئی پراڈکٹ نہیں</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-sales" class="tab-content">
+            <div class="card">
+                <h3 class="section-title">💰 نئی سیل</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>بارکوڈ اسکین کریں یا لکھیں</label>
+                        <input type="text" id="saleBarcode" placeholder="بارکوڈ درج کریں" onchange="findProductForSale()">
+                    </div>
+                    <div class="input-group">
+                        <label>پراڈکٹ کا نام</label>
+                        <input type="text" id="saleProductName" readonly placeholder="خودکار آ جائے گا" style="background: #f5f5f5;">
+                    </div>
+                    <div class="input-group">
+                        <label>مقدار</label>
+                        <input type="number" id="saleQuantity" value="1" min="1" onchange="calculateSaleTotal()">
+                    </div>
+                    <div class="input-group">
+                        <label>فی یونٹ قیمت</label>
+                        <input type="number" id="saleUnitPrice" readonly style="background: #f5f5f5;">
+                    </div>
+                </div>
+                <div class="price-box sale" style="margin: 20px 0;">
+                    <div class="price-label">کل رقم</div>
+                    <div class="price-value" id="saleTotal" style="font-size: 36px;">₹0.00</div>
+                </div>
+                <button class="btn btn-success" onclick="makeSale()" style="width: 100%; padding: 16px; font-size: 18px;">💰 سیل مکمل کریں</button>
+            </div>
+            <div class="card">
+                <h3 class="section-title">📋 سیلز کی تاریخ</h3>
+                <div id="salesHistory">
+                    <div class="empty-state">کوئی سیل ریکارڈ نہیں</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-staff" class="tab-content">
+            <div class="card">
+                <h3 class="section-title">➕ نیا اسٹاف شامل کریں</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>پورا نام *</label>
+                        <input type="text" id="staffName" placeholder="ملازم کا پورا نام">
+                    </div>
+                    <div class="input-group">
+                        <label>صارف نام * (یونیک)</label>
+                        <input type="text" id="staffUsername" placeholder="جیسے: ali123">
+                    </div>
+                    <div class="input-group">
+                        <label>پاس ورڈ *</label>
+                        <input type="password" id="staffPassword" placeholder="پاس ورڈ">
+                    </div>
+                    <div class="input-group">
+                        <label>کردار *</label>
+                        <select id="staffRole">
+                            <option value="manager">👔 منیجر</option>
+                            <option value="salesman">🛒 سیلزمین</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addStaff()" style="width: 100%; margin-top: 15px; padding: 16px;">✅ اسٹاف شامل کریں</button>
+            </div>
+            <div class="card">
+                <h3 class="section-title">📋 میرا اسٹاف</h3>
+                <div id="staffList">
+                    <div class="empty-state">👥 ابھی تک کوئی اسٹاف نہیں</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-settings" class="tab-content">
+            <div class="card">
+                <h3 class="section-title">☁️ گوگل شیٹس سیٹ اپ</h3>
+                <div class="info-text">
+                    📋 <strong>گوگل شیٹس سے کیسے منسلک کریں:</strong><br>
+                    1. Google Sheets میں نئی شیٹ بنائیں<br>
+                    2. شیئر کریں → Anyone with link → Viewer<br>
+                    3. شیٹ کا ID کاپی کریں (URL سے)<br>
+                    4. یہاں پیسٹ کریں
+                </div>
+                <div class="input-group">
+                    <label>گوگل شیٹ ID</label>
+                    <input type="text" id="sheetId" placeholder="مثال: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+                </div>
+                <button class="btn btn-primary" onclick="saveSheetSettings()" style="width: 100%; margin-top: 10px;">💾 سیٹنگز محفوظ کریں</button>
+            </div>
+            <div class="card" style="margin-top: 15px;">
+                <h3 class="section-title">🗑️ ڈیٹا مینجمنٹ</h3>
+                <button class="btn btn-warning" onclick="syncNow()" style="width: 100%; margin-bottom: 10px; padding: 14px;">🔄 ابھی ہم آہنگ کریں</button>
+                <button class="btn btn-danger" onclick="clearAllData()" style="width: 100%; padding: 14px;">⚠️ تمام ڈیٹا حذف کریں</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ownerRegisterModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>📝 نیا اکاؤنٹ اونر بنائیں</h3>
+                <button class="close-x" onclick="closeOwnerRegister()">&times;</button>
+            </div>
+            <div class="info-text">
+                🏪 <strong>اکاؤنٹ اونر رجسٹریشن</strong><br>
+                یہ اکاؤنٹ آپ کا مالکانہ اکاؤنٹ ہوگی۔ اس سے آپ منیجر اور سیلزمین بنا سکیں گے۔
+            </div>
+            <div class="input-group">
+                <label>پورا نام *</label>
+                <input type="text" id="ownerRegName" placeholder="اپنا پورا نام">
+            </div>
+            <div class="input-group">
+                <label>صارف نام * (یونیک)</label>
+                <input type="text" id="ownerRegUsername" placeholder="جیسے: shop123">
+            </div>
+            <div class="input-group">
+                <label>پاس ورڈ *</label>
+                <input type="password" id="ownerRegPassword" placeholder="کم از کم 4 حروف">
+            </div>
+            <div class="input-group">
+                <label>پاس ورڈ تصدیق *</label>
+                <input type="password" id="ownerRegConfirm" placeholder="پاس ورڈ دوبارہ">
+            </div>
+            <button class="btn btn-success" onclick="registerOwner()" style="width: 100%; margin-top: 10px; padding: 14px;">✅ اکاؤنٹ بنائیں</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>✏️ پراڈکٹ میں ترمیم</h3>
+                <button class="close-x" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="input-group">
+                <label>پراڈکٹ کا نام</label>
+                <input type="text" id="editName">
+            </div>
+            <div class="input-group">
+                <label>بارکوڈ</label>
+                <input type="text" id="editBarcode">
+            </div>
+            <div class="input-group">
+                <label>کیٹیگری</label>
+                <select id="editCategory">
+                    <option value="گروسری">گروسری</option>
+                    <option value="الیکٹرانکس">الیکٹرانکس</option>
+                    <option value="کپڑے">کپڑے</option>
+                    <option value="دوائیں">دوائیں</option>
+                    <option value="کاسمیٹکس">کاسمیٹکس</option>
+                    <option value="دیگر">دیگر</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>مقدار</label>
+                <input type="number" id="editQuantity" min="0">
+            </div>
+            <div class="input-group owner-edit-price" id="editCostSection">
+                <label>🛒 خرید قیمت (صرف اونر)</label>
+                <input type="number" id="editCostPrice" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>🏷️ فروخت قیمت</label>
+                <input type="number" id="editSalePrice" step="0.01">
+            </div>
+            <button class="btn btn-success" onclick="saveEdit()" style="width: 100%; margin-top: 10px; padding: 14px;">💾 تبدیلیاں محفوظ کریں</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
